@@ -1,25 +1,24 @@
 import Head from "next/head";
 import { Box, Container } from "@mui/material";
-import { CustomerListResults } from "../components/customer/customer-list-results";
-import { CustomerListToolbar } from "../components/customer/customer-list-toolbar";
+import { CustomerListResults } from "../components/usuarios/customer-list-results";
+import { CustomerListToolbar } from "../components/usuarios/customer-list-toolbar";
 import { DashboardLayout } from "../components/dashboard-layout";
-import { customers } from "../__mocks__/customers";
 import { useEffect, useState } from "react";
 import instanciaAxios from "src/utils/instancia-axios";
 import { toast } from "react-toastify";
 
 const Customers = () => {
-  const [clientes, setClientes] = useState([]);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    obtenerClientes();
+    obtenerData();
   }, []);
 
-  const obtenerClientes = async () => {
+  const obtenerData = async () => {
     try {
-      const clientes = await instanciaAxios.get("/empresas");
-      setClientes(clientes.data);
-      if (clientes.data.length === 0) {
+      const response = await instanciaAxios.post("/usuario/get");
+      setData(response.data);
+      if (response.data.length === 0) {
         toast.warning("No se encontraron clientes");
       }
     } catch (error) {
@@ -29,7 +28,7 @@ const Customers = () => {
   return (
     <>
       <Head>
-        <title>Clientes</title>
+        <title>Usuarios</title>
       </Head>
       <Box
         component="main"
@@ -39,9 +38,9 @@ const Customers = () => {
         }}
       >
         <Container maxWidth={false}>
-          <CustomerListToolbar refrescar={obtenerClientes} />
+          <CustomerListToolbar refrescar={obtenerData} />
           <Box sx={{ mt: 3 }}>
-            <CustomerListResults clientes={clientes} refrescar={obtenerClientes} />
+            <CustomerListResults clientes={data} refrescar={obtenerData} />
           </Box>
         </Container>
       </Box>

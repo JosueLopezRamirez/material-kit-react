@@ -12,6 +12,7 @@ import * as Yup from "yup";
 import IndicadorCarga from "../IndicadorCarga";
 import { makeStyles } from "@mui/styles";
 import { toast } from "react-toastify";
+import { MenuItem, Select } from "@mui/material";
 
 const useStyles = makeStyles({
   root: {
@@ -22,21 +23,24 @@ const useStyles = makeStyles({
 export default function EditarClienteModal({ id, open, handleClose }) {
   const classes = useStyles();
   const [cargando, setCargando] = useState(false);
+  const [roles, setRoles] = useState([]);
   const formik = useFormik({
     initialValues: {
       nombre: "",
-      descripcion: "",
-      ruc: "",
-      telefono: "",
+      apellidoMaterno: "",
+      apellidoPaterno: "",
+      correo: "",
+      rolId: "",
     },
     validationSchema: Yup.object({
       nombre: Yup.string().max(255).required("Nombre es requerido"),
-      ruc: Yup.string().max(255).required("Ruc es requerido"),
-      telefono: Yup.string().max(255).required("Telefono es requerido"),
+      apellidoPaterno: Yup.string().max(255).required("Apellido paterno es requerido"),
+      correo: Yup.string().email("Debe ser correo valido").max(255).required("Correo es requerido"),
+      rolId: Yup.string().max(255).required("Rol es requerido"),
     }),
     onSubmit: async (data) => {
       try {
-        await instanciaAxios.patch(`/empresas/${id}`, data);
+        await instanciaAxios.patch(`/usuario/${id}`, data);
         toast.success("Cliente editado correctamente");
         handleClose();
       } catch (error) {
@@ -48,15 +52,23 @@ export default function EditarClienteModal({ id, open, handleClose }) {
   useEffect(() => {
     if (!open) return;
     pedirInformacionCliente();
+    obtenerRoles();
   }, [open]);
+
+  const obtenerRoles = async () => {
+    const roles = await instanciaAxios.get(`/roles`);
+    setRoles(roles.data);
+  };
 
   const pedirInformacionCliente = async () => {
     try {
       setCargando(true);
-      const respuesta = await instanciaAxios.get(`/empresas/${id}`);
+      const respuesta = await instanciaAxios.get(`/usuario/${id}`);
       formik.initialValues.nombre = respuesta.data.nombre;
-      formik.initialValues.ruc = respuesta.data.ruc;
-      formik.initialValues.telefono = respuesta.data.telefono;
+      formik.initialValues.apellidoPaterno = respuesta.data.apellidoPaterno;
+      formik.initialValues.apellidoMaterno = respuesta.data.apellidoMaterno;
+      formik.initialValues.correo = respuesta.data.correo;
+      formik.initialValues.rolId = respuesta.data.rolId;
     } catch (error) {
       //
     } finally {
@@ -68,7 +80,7 @@ export default function EditarClienteModal({ id, open, handleClose }) {
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Editar cliente</DialogTitle>
+      <DialogTitle>Editar usuario</DialogTitle>
       {cargando ? (
         <div className={classes.root}>
           <IndicadorCarga />
@@ -76,20 +88,6 @@ export default function EditarClienteModal({ id, open, handleClose }) {
       ) : (
         <form onSubmit={formik.handleSubmit}>
           <DialogContent>
-            <TextField
-              error={Boolean(formik.touched.descripcion && formik.errors.descripcion)}
-              helperText={formik.touched.descripcion && formik.errors.descripcion}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values.descripcion}
-              autoFocus
-              margin="dense"
-              name="descripcion"
-              label="Descripcion"
-              type="textarea"
-              fullWidth
-              variant="standard"
-            />
             <TextField
               error={Boolean(formik.touched.nombre && formik.errors.nombre)}
               helperText={formik.touched.nombre && formik.errors.nombre}
@@ -105,31 +103,64 @@ export default function EditarClienteModal({ id, open, handleClose }) {
               variant="standard"
             />
             <TextField
-              error={Boolean(formik.touched.ruc && formik.errors.ruc)}
-              helperText={formik.touched.ruc && formik.errors.ruc}
+              error={Boolean(formik.touched.apellidoPaterno && formik.errors.apellidoPaterno)}
+              helperText={formik.touched.apellidoPaterno && formik.errors.apellidoPaterno}
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
-              value={formik.values.ruc}
+              value={formik.values.apellidoPaterno}
+              autoFocus
               margin="dense"
-              name="ruc"
-              label="Ruc"
+              name="apellidoPaterno"
+              label="Apellido paterno"
               type="text"
               fullWidth
               variant="standard"
             />
             <TextField
-              error={Boolean(formik.touched.telefono && formik.errors.telefono)}
-              helperText={formik.touched.telefono && formik.errors.telefono}
+              error={Boolean(formik.touched.apellidoMaterno && formik.errors.apellidoMaterno)}
+              helperText={formik.touched.apellidoMaterno && formik.errors.apellidoMaterno}
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
-              value={formik.values.telefono}
+              value={formik.values.apellidoMaterno}
+              autoFocus
               margin="dense"
-              name="telefono"
-              label="Telefono"
+              name="apellidoMaterno"
+              label="Apellido materno"
               type="text"
               fullWidth
               variant="standard"
             />
+            <TextField
+              error={Boolean(formik.touched.correo && formik.errors.correo)}
+              helperText={formik.touched.correo && formik.errors.correo}
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              value={formik.values.correo}
+              margin="dense"
+              name="correo"
+              label="Correo"
+              type="email"
+              fullWidth
+              variant="standard"
+            />
+            <TextField
+              value={formik.values.rolId}
+              select
+              label="Rol"
+              name="rolId"
+              onChange={formik.handleChange}
+              error={Boolean(formik.touched.rolId && formik.errors.rolId)}
+              helperText={formik.touched.rolId && formik.errors.rolId}
+              onBlur={formik.handleBlur}
+              fullWidth
+              margin="dense"
+              sx={{ marginTop: 2 }}
+              variant="standard"
+            >
+              {roles.map((rol) => (
+                <MenuItem value={rol.id}>{rol.nombre}</MenuItem>
+              ))}
+            </TextField>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>

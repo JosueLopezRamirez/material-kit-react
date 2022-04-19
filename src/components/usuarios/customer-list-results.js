@@ -108,9 +108,10 @@ export const CustomerListResults = ({ clientes, refrescar, ...rest }) => {
                   />
                 </TableCell>
                 <TableCell>Nombre</TableCell>
-                <TableCell>Descripcion</TableCell>
-                <TableCell>Ruc</TableCell>
-                <TableCell>Telefono</TableCell>
+                <TableCell>Apellido Paterno</TableCell>
+                <TableCell>Apellido Materno</TableCell>
+                <TableCell>Correo</TableCell>
+                <TableCell>Rol</TableCell>
                 <TableCell>Fecha Creacion</TableCell>
                 <TableCell>Acciones</TableCell>
               </TableRow>
@@ -130,9 +131,10 @@ export const CustomerListResults = ({ clientes, refrescar, ...rest }) => {
                     />
                   </TableCell>
                   <TableCell>{cliente.nombre}</TableCell>
-                  <TableCell>{cliente.descripcion}</TableCell>
-                  <TableCell>{cliente.ruc}</TableCell>
-                  <TableCell>{cliente.telefono}</TableCell>
+                  <TableCell>{cliente.apellidoPaterno}</TableCell>
+                  <TableCell>{cliente.apellidoMaterno}</TableCell>
+                  <TableCell>{cliente.correo}</TableCell>
+                  <TableCell>{cliente.rol.nombre}</TableCell>
                   <TableCell>{format(new Date(cliente.createdAt), "dd-MM-yyyy")}</TableCell>
                   <TableCell>
                     <Button

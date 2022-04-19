@@ -1,42 +1,34 @@
-import Head from 'next/head';
-import NextLink from 'next/link';
-import { useRouter } from 'next/router';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { Box, Button, Container, Grid, Link, TextField, Typography } from '@mui/material';
-import instanciaAxios from 'src/utils/instancia-axios';
-import { toast } from 'react-toastify';
+import Head from "next/head";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { Box, Button, Container, Grid, Link, TextField, Typography } from "@mui/material";
+import instanciaAxios from "src/utils/instancia-axios";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
-      nombreUsuario: '',
-      contrasenia: ''
+      nombreUsuario: "",
+      contrasenia: "",
     },
     validationSchema: Yup.object({
-      nombreUsuario: Yup
-        .string()
-        .max(255)
-        .required(
-          'Nombre de usuario es requerido'),
-      contrasenia: Yup
-        .string()
-        .max(255)
-        .required(
-          'Contraseña es requerida')
+      nombreUsuario: Yup.string().max(255).required("Nombre de usuario es requerido"),
+      contrasenia: Yup.string().max(255).required("Contraseña es requerida"),
     }),
     onSubmit: async (data) => {
       try {
-        const respuesta = await instanciaAxios.post("/login", data);
+        const respuesta = await instanciaAxios.post("/autenticacion/login", data);
         toast.success(respuesta.data);
         setTimeout(() => {
-          router.push('/');
-        }, 1000)
+          router.push("/");
+        }, 1000);
       } catch (error) {
         toast.error("Error al logear");
       }
-    }
+    },
   });
 
   return (
@@ -47,19 +39,16 @@ const Login = () => {
       <Box
         component="main"
         sx={{
-          alignItems: 'center',
-          display: 'flex',
+          alignItems: "center",
+          display: "flex",
           flexGrow: 1,
-          minHeight: '100%'
+          minHeight: "100%",
         }}
       >
-        <Container maxWidth="sm">
+        <Container maxWidth="sm" sx={{ border: "1px solid lightgray", borderRadius: "10px" }}>
           <form onSubmit={formik.handleSubmit}>
             <Box sx={{ my: 3 }}>
-              <Typography
-                color="textPrimary"
-                variant="h4"
-              >
+              <Typography color="textPrimary" variant="h4">
                 Iniciar Sesion
               </Typography>
             </Box>
