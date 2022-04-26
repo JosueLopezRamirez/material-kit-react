@@ -11,8 +11,8 @@ import {
 import { useState } from "react";
 import { Search as SearchIcon } from "../../icons/search";
 
-export const CustomerListToolbar = (props) => {
-  const { title, btnText, onClickBtn, searchText, ...rest } = props;
+export const Toolbar = (props) => {
+  const { title, btnText, onClickBtn, searchText, onSearch, ...rest } = props;
   return (
     <Box {...rest}>
       <Box
@@ -50,6 +50,7 @@ export const CustomerListToolbar = (props) => {
                 }}
                 placeholder={searchText}
                 variant="outlined"
+                onChange={onSearch}
               />
             </Box>
           </CardContent>

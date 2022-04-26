@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -18,6 +18,9 @@ import { DatePicker, LocalizationProvider } from "@mui/lab";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { makeStyles } from "@mui/styles";
 import { AgGridReact } from "ag-grid-react";
+import { AddCircleOutlined } from "@mui/icons-material";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 const useStyles = makeStyles({
   cardHeader: {
@@ -33,34 +36,65 @@ const useStyles = makeStyles({
   },
 });
 
-export const AccountProfileDetails = (props) => {
+export const DetalleComprobanteDiario = (props) => {
+  const { formData, isEdit } = props;
   const classes = useStyles();
-
+  const router = useRouter();
+  const [gridData, setGridData] = useState([]);
+  const [gridApi, setGridApi] = useState();
   const [clientes, setClientes] = useState([]);
+
   const formik = useFormik({
     initialValues: {
-      clienteId: "",
-      nombre: "",
-      fecha: "",
+      empresaId: formData.empresaId,
+      nombre: formData.nombre,
+      fecha: formData.fecha,
     },
     validationSchema: Yup.object({
       nombre: Yup.string().max(255).required("Nombre es requerido"),
-      clienteId: Yup.string().max(255).required("Cliente es requerido"),
+      empresaId: Yup.string().max(255).required("Cliente es requerido"),
       fecha: Yup.string().max(255).required("Fecha es requerido"),
     }),
     onSubmit: async (data) => {
       try {
-        await instanciaAxios.post(`/comprobante-diario/`, data);
-        toast.success("Comprobante de diario creado correctamente");
+        let respuesta = null;
+        const rowData = getRowData();
+        if (isEdit) {
+          respuesta = await instanciaAxios.patch(`/comprobante-diario/` + formData.id, {
+            comprobante: data,
+            comprobanteItems: rowData,
+          });
+        } else {
+          respuesta = await instanciaAxios.post(`/comprobante-diario/`, {
+            comprobante: data,
+            comprobanteItems: rowData,
+          });
+        }
+        if (!respuesta.data.id) {
+          throw new Error();
+        }
+        toast.success(`Comprobante de diario ${isEdit ? "actualizado" : "creado"} correctamente`);
+        router.push("/account/" + respuesta.data.id);
         handleClose();
       } catch (error) {
-        toast.error("Error al crear comprobante de diario");
+        toast.error(`Error al ${isEdit ? "actualizar" : "crear"} comprobante de diario`);
       }
     },
   });
 
+  const getRowData = () => {
+    const rowData = [];
+    gridApi.forEachNode((node) => {
+      rowData.push(node.data);
+    });
+    return rowData;
+  };
+
   useMount(() => {
     obtenerClientes();
+    if (Object.entries(formData).length) {
+      setGridData(formData.comprobanteDiarioItem);
+    }
   });
 
   const columnDefs = useMemo(
@@ -81,7 +115,7 @@ export const AccountProfileDetails = (props) => {
 
   return (
     <>
-      <form autoComplete="off" noValidate {...props}>
+      <form onSubmit={formik.handleSubmit}>
         <Card>
           <CardHeader title="Detalle del comprobante" classes={{ root: classes.cardHeader }} />
           <Divider />
@@ -91,12 +125,12 @@ export const AccountProfileDetails = (props) => {
                 <TextField
                   fullWidth
                   label="Clientes"
-                  name="cliente"
+                  name="empresaId"
                   select
-                  value={formik.values.clienteId}
+                  value={formik.values.empresaId}
                   onChange={formik.handleChange}
-                  error={Boolean(formik.touched.clienteId && formik.errors.clienteId)}
-                  helperText={formik.touched.clienteId && formik.errors.clienteId}
+                  error={Boolean(formik.touched.empresaId && formik.errors.empresaId)}
+                  helperText={formik.touched.empresaId && formik.errors.empresaId}
                   onBlur={formik.handleBlur}
                   margin="dense"
                   variant="standard"
@@ -128,7 +162,6 @@ export const AccountProfileDetails = (props) => {
                     name="fecha"
                     value={formik.values.fecha}
                     onChange={(val) => {
-                      console.log(val);
                       formik.setFieldValue("fecha", val);
                     }}
                     renderInput={(params) => (
@@ -154,14 +187,36 @@ export const AccountProfileDetails = (props) => {
               p: 2,
             }}
           >
-            <Button color="primary" variant="contained">
+            <Button color="primary" variant="contained" type="submit">
               Guardar
             </Button>
           </Box>
         </Card>
       </form>
+
       <div className="ag-theme-alpine" style={{ height: 400, width: "100%", marginTop: 15 }}>
-        <AgGridReact rowData={[]} columnDefs={columnDefs}></AgGridReact>
+        <div>
+          <Button
+            startIcon={<AddCircleOutlined />}
+            sx={{ mr: 1 }}
+            onClick={() => {
+              gridApi.applyTransaction({ add: [{ isNewRow: true }] });
+            }}
+          >
+            Agregar fila
+          </Button>
+        </div>
+        <AgGridReact
+          rowData={gridData}
+          columnDefs={columnDefs}
+          defaultColDef={{
+            editable: true,
+          }}
+          onGridReady={(params) => {
+            params.api.sizeColumnsToFit();
+            setGridApi(params.api);
+          }}
+        />
       </div>
     </>
   );
