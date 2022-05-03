@@ -18,6 +18,7 @@ import {
 import { useRouter } from "next/router";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import SummarizeIcon from "@mui/icons-material/Summarize";
 import instanciaAxios from "src/utils/instancia-axios";
 import { toast } from "react-toastify";
 
@@ -61,12 +62,17 @@ export const TablaComprobanteDiario = ({ data, refetch, editar, ...rest }) => {
               {data.slice(0, limit).map((item) => (
                 <TableRow hover key={item.id}>
                   <TableCell>{item.nombre}</TableCell>
-                  <TableCell>{item.empresa.nombre}</TableCell>
+                  <TableCell>{item.estatico.documento.empresa.nombre}</TableCell>
                   <TableCell>{format(new Date(item.fecha), "dd-MM-yyyy")}</TableCell>
                   <TableCell>
                     <Button
                       startIcon={<EditIcon style={{ color: "blue" }} />}
                       onClick={() => router.push(`/account/${item.id}`)}
+                      sx={{ mr: 1 }}
+                    />
+                    <Button
+                      startIcon={<SummarizeIcon style={{ color: "green" }} />}
+                      onClick={() => router.push(`/account/historial/${item.id}`)}
                       sx={{ mr: 1 }}
                     />
                     <Button

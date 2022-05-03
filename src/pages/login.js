@@ -11,17 +11,18 @@ const Login = () => {
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
-      nombreUsuario: "",
-      contrasenia: "",
+      correo: "",
+      password: "",
     },
     validationSchema: Yup.object({
-      nombreUsuario: Yup.string().max(255).required("Nombre de usuario es requerido"),
-      contrasenia: Yup.string().max(255).required("Contraseña es requerida"),
+      correo: Yup.string().max(255).required("Nombre de usuario es requerido"),
+      password: Yup.string().max(255).required("Contraseña es requerida"),
     }),
     onSubmit: async (data) => {
       try {
         const respuesta = await instanciaAxios.post("/autenticacion/login", data);
-        toast.success(respuesta.data);
+        localStorage.setItem("token", respuesta.data.access_token);
+        toast.success("Logeado Correctamente");
         setTimeout(() => {
           router.push("/");
         }, 1000);
@@ -53,28 +54,28 @@ const Login = () => {
               </Typography>
             </Box>
             <TextField
-              error={Boolean(formik.touched.nombreUsuario && formik.errors.nombreUsuario)}
-              helperText={formik.touched.nombreUsuario && formik.errors.nombreUsuario}
+              error={Boolean(formik.touched.correo && formik.errors.correo)}
+              helperText={formik.touched.correo && formik.errors.correo}
               fullWidth
               label="Nombre de Usuario"
               margin="normal"
-              name="nombreUsuario"
+              name="correo"
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               type="text"
-              value={formik.values.nombreUsuario}
+              value={formik.values.correo}
               variant="outlined"
             />
             <TextField
               fullWidth
-              error={Boolean(formik.touched.contrasenia && formik.errors.contrasenia)}
-              helperText={formik.touched.contrasenia && formik.errors.contrasenia}
+              error={Boolean(formik.touched.password && formik.errors.password)}
+              helperText={formik.touched.password && formik.errors.password}
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
-              value={formik.values.contrasenia}
+              value={formik.values.password}
               label="Contraseña"
               margin="normal"
-              name="contrasenia"
+              name="password"
               type="password"
               variant="outlined"
             />

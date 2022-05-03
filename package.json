@@ -39,7 +39,9 @@
     "react-toastify": "^8.2.0",
     "react-use": "^17.3.2",
     "uuid": "^8.3.0",
-    "yup": "^0.32.9"
+    "yup": "^0.32.9",
+    "zustand": "^4.0.0-rc.1",
+    "zustand-persist": "^0.4.0"
   },
   "devDependencies": {
     "eslint": "^7.32.0",

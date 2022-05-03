@@ -134,6 +134,7 @@ export const DetalleComprobanteDiario = (props) => {
                   onBlur={formik.handleBlur}
                   margin="dense"
                   variant="standard"
+                  disabled={isEdit}
                 >
                   {clientes.map((option) => (
                     <MenuItem value={option.id}>{option.nombre}</MenuItem>
