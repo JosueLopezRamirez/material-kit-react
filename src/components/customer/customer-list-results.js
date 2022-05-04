@@ -23,43 +23,10 @@ import { toast } from "react-toastify";
 import EditarClienteModal from "./EditarCliente";
 
 export const CustomerListResults = ({ clientes, refrescar, ...rest }) => {
-  const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(25);
   const [editarCliente, setEditarCliente] = useState(null);
   const [abrirModal, setAbrirModal] = useState(false);
   const [page, setPage] = useState(0);
-
-  const handleSelectAll = (event) => {
-    let newSelectedCustomerIds;
-
-    if (event.target.checked) {
-      newSelectedCustomerIds = clientes.map((customer) => customer.id);
-    } else {
-      newSelectedCustomerIds = [];
-    }
-
-    setSelectedCustomerIds(newSelectedCustomerIds);
-  };
-
-  const handleSelectOne = (event, id) => {
-    const selectedIndex = selectedCustomerIds.indexOf(id);
-    let newSelectedCustomerIds = [];
-
-    if (selectedIndex === -1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds, id);
-    } else if (selectedIndex === 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(1));
-    } else if (selectedIndex === selectedCustomerIds.length - 1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(
-        selectedCustomerIds.slice(0, selectedIndex),
-        selectedCustomerIds.slice(selectedIndex + 1)
-      );
-    }
-
-    setSelectedCustomerIds(newSelectedCustomerIds);
-  };
 
   const handleLimitChange = (event) => {
     setLimit(event.target.value);
@@ -97,16 +64,6 @@ export const CustomerListResults = ({ clientes, refrescar, ...rest }) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedCustomerIds.length === clientes.length}
-                    color="primary"
-                    indeterminate={
-                      selectedCustomerIds.length > 0 && selectedCustomerIds.length < clientes.length
-                    }
-                    onChange={handleSelectAll}
-                  />
-                </TableCell>
                 <TableCell>Nombre</TableCell>
                 <TableCell>Descripcion</TableCell>
                 <TableCell>Ruc</TableCell>
@@ -117,18 +74,7 @@ export const CustomerListResults = ({ clientes, refrescar, ...rest }) => {
             </TableHead>
             <TableBody>
               {clientes.slice(0, limit).map((cliente) => (
-                <TableRow
-                  hover
-                  key={cliente.id}
-                  selected={selectedCustomerIds.indexOf(cliente.id) !== -1}
-                >
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={selectedCustomerIds.indexOf(cliente.id) !== -1}
-                      onChange={(event) => handleSelectOne(event, cliente.id)}
-                      value="true"
-                    />
-                  </TableCell>
+                <TableRow hover key={cliente.id}>
                   <TableCell>{cliente.nombre}</TableCell>
                   <TableCell>{cliente.descripcion}</TableCell>
                   <TableCell>{cliente.ruc}</TableCell>

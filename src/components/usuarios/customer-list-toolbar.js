@@ -45,9 +45,10 @@ export const CustomerListToolbar = (props) => {
       <Box sx={{ mt: 3 }}>
         <Card>
           <CardContent>
-            <Box sx={{ maxWidth: 500 }}>
+            <Box sx={{ maxWidth: "100%" }}>
               <TextField
                 fullWidth
+                size="small"
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">

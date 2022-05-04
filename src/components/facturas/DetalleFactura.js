@@ -36,12 +36,12 @@ const useStyles = makeStyles({
   },
 });
 
-export const DetalleComprobanteDiario = (props) => {
+export const DetalleFactura = (props) => {
   const { formData, isEdit } = props;
   const classes = useStyles();
   const router = useRouter();
+  const gridRef = useRef();
   const [gridData, setGridData] = useState([]);
-  const [gridApi, setGridApi] = useState();
   const [clientes, setClientes] = useState([]);
 
   const formik = useFormik({
@@ -60,12 +60,12 @@ export const DetalleComprobanteDiario = (props) => {
         let respuesta = null;
         const rowData = getRowData();
         if (isEdit) {
-          respuesta = await instanciaAxios.patch(`/comprobante-diario/` + formData.id, {
+          respuesta = await instanciaAxios.patch(`/facturas/` + formData.id, {
             comprobante: data,
             comprobanteItems: rowData,
           });
         } else {
-          respuesta = await instanciaAxios.post(`/comprobante-diario/`, {
+          respuesta = await instanciaAxios.post(`/facturas/`, {
             comprobante: data,
             comprobanteItems: rowData,
           });
@@ -73,18 +73,18 @@ export const DetalleComprobanteDiario = (props) => {
         if (!respuesta.data.id) {
           throw new Error();
         }
-        toast.success(`Comprobante de diario ${isEdit ? "actualizado" : "creado"} correctamente`);
+        toast.success(`Factura ${isEdit ? "actualizada" : "creada"} correctamente`);
         router.push("/account/" + respuesta.data.id);
         handleClose();
       } catch (error) {
-        toast.error(`Error al ${isEdit ? "actualizar" : "crear"} comprobante de diario`);
+        toast.error(`Error al ${isEdit ? "actualizar" : "crear"} factura`);
       }
     },
   });
 
   const getRowData = () => {
     const rowData = [];
-    gridApi.forEachNode((node) => {
+    gridRef.current.api.forEachNode((node) => {
       rowData.push(node.data);
     });
     return rowData;
@@ -199,21 +199,19 @@ export const DetalleComprobanteDiario = (props) => {
             startIcon={<AddCircleOutlined />}
             sx={{ mr: 1 }}
             onClick={() => {
-              gridApi.applyTransaction({ add: [{ isNewRow: true }] });
+              gridRef.current.api.applyTransaction({ add: [{ isNewRow: true }] });
             }}
           >
             Agregar fila
           </Button>
         </div>
         <AgGridReact
+          ref={gridRef}
           rowData={gridData}
           columnDefs={columnDefs}
           defaultColDef={{
+            flex: 1,
             editable: true,
-          }}
-          onGridReady={(params) => {
-            params.api.sizeColumnsToFit();
-            setGridApi(params.api);
           }}
         />
       </div>

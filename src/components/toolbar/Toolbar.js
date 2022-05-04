@@ -7,12 +7,14 @@ import {
   InputAdornment,
   SvgIcon,
   Typography,
+  Grid,
+  Container,
 } from "@mui/material";
 import { useState } from "react";
 import { Search as SearchIcon } from "../../icons/search";
 
 export const Toolbar = (props) => {
-  const { title, btnText, onClickBtn, searchText, onSearch, ...rest } = props;
+  const { title, btnText, onClickBtn, searchText, onSearch, onlySearch, ...rest } = props;
   return (
     <Box {...rest}>
       <Box
@@ -36,23 +38,26 @@ export const Toolbar = (props) => {
       <Box sx={{ mt: 3 }}>
         <Card>
           <CardContent>
-            <Box sx={{ maxWidth: 500 }}>
-              <TextField
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SvgIcon color="action" fontSize="small">
-                        <SearchIcon />
-                      </SvgIcon>
-                    </InputAdornment>
-                  ),
-                }}
-                placeholder={searchText}
-                variant="outlined"
-                onChange={onSearch}
-              />
-            </Box>
+            <Grid container>
+              <Grid item lg={onlySearch ? 12 : 4} md={onlySearch ? 12 : 4} sm={12}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SvgIcon color="action" fontSize="small">
+                          <SearchIcon />
+                        </SvgIcon>
+                      </InputAdornment>
+                    ),
+                  }}
+                  placeholder={searchText}
+                  variant="outlined"
+                  onChange={onSearch}
+                />
+              </Grid>
+            </Grid>
           </CardContent>
         </Card>
       </Box>

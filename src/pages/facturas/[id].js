@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { Box, Container, Grid, Typography } from "@mui/material";
-import { DetalleComprobanteDiario } from "../../components/account/DetalleComprobanteDiario";
+import { DetalleFactura } from "../../components/facturas/DetalleFactura";
 import { DashboardLayout } from "../../components/dashboard-layout";
 import { useRouter } from "next/router";
 import { useMount } from "react-use";
@@ -16,14 +16,14 @@ const Account = () => {
       setDetalle({});
       return;
     }
-    const detalle = await instanciaAxios.get("/comprobante-diario/" + query.id);
+    const detalle = await instanciaAxios.get("/facturas/" + query.id);
     setDetalle(detalle.data);
   });
 
   return (
     <>
       <Head>
-        <title>Detalle - comprobantes de diario</title>
+        <title>Detalle - Facturas</title>
       </Head>
       <Box
         component="main"
@@ -34,13 +34,11 @@ const Account = () => {
       >
         <Container maxWidth="lg">
           <Typography sx={{ mb: 3 }} variant="h5">
-            Detalle - comprobantes de Diario
+            Detalle de facturas
           </Typography>
           <Grid container spacing={3}>
             <Grid item lg={12} md={12} xs={12}>
-              {detalle && (
-                <DetalleComprobanteDiario formData={detalle} isEdit={query.id !== "create"} />
-              )}
+              {detalle && <DetalleFactura formData={detalle} isEdit={query.id !== "create"} />}
             </Grid>
           </Grid>
         </Container>

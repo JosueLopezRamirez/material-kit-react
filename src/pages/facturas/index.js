@@ -1,9 +1,6 @@
 import Head from "next/head";
 import { Box, Container } from "@mui/material";
-import {
-  CustomerListResults,
-  TablaComprobanteDiario,
-} from "../../components/account/TablaComprobanteDiario";
+import { TablaFactura } from "../../components/facturas/TablaFactura";
 import { Toolbar } from "../../components/toolbar/Toolbar";
 import { DashboardLayout } from "../../components/dashboard-layout";
 import { useEffect, useState } from "react";
@@ -24,17 +21,17 @@ const Customers = () => {
 
   const getData = async (searchText = "") => {
     try {
-      const response = await instanciaAxios.get("/comprobante-diario", {
+      const response = await instanciaAxios.get("/facturas", {
         params: {
           searchText: searchText,
         },
       });
       setData(response.data);
       if (response.data.length === 0) {
-        toast.warning("No se encontraron comprobantes de diario");
+        toast.warning("No se encontraron facturas");
       }
     } catch (error) {
-      toast.error("Error al obtener comprobantes de diario");
+      toast.error("Error al obtener facturas");
     }
   };
 
@@ -48,7 +45,7 @@ const Customers = () => {
   return (
     <>
       <Head>
-        <title>Clientes</title>
+        <title>Facturas</title>
       </Head>
       <Box
         component="main"
@@ -59,14 +56,14 @@ const Customers = () => {
       >
         <Container maxWidth={false}>
           <Toolbar
-            title="Comprobantes de diario"
-            btnText={"Nuevo comprobante de diario"}
-            onClickBtn={() => router.push("/account/create")}
-            searchText="Buscar Comprobante de diario"
+            title="Facturas"
+            btnText={"Nueva factura"}
+            onClickBtn={() => router.push("/facturas/create")}
+            searchText="Buscar facturas"
             onSearch={onSearch}
           />
           <Box sx={{ mt: 3 }}>
-            <TablaComprobanteDiario data={data} refetch={getData} />
+            <TablaFactura data={data} refetch={getData} />
           </Box>
         </Container>
       </Box>

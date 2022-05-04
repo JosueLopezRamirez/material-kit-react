@@ -21,7 +21,7 @@ import SummarizeIcon from "@mui/icons-material/Summarize";
 import instanciaAxios from "src/utils/instancia-axios";
 import { toast } from "react-toastify";
 
-export const TablaComprobanteDiario = ({ data, refetch, editar, ...rest }) => {
+export const TablaFactura = ({ data, refetch, editar, ...rest }) => {
   const [limit, setLimit] = useState(25);
   const router = useRouter();
   const [page, setPage] = useState(0);
@@ -105,7 +105,7 @@ export const TablaComprobanteDiario = ({ data, refetch, editar, ...rest }) => {
   );
 };
 
-TablaComprobanteDiario.propTypes = {
+TablaFactura.propTypes = {
   data: PropTypes.array.isRequired,
   refetch: PropTypes.func.isRequired,
 };
