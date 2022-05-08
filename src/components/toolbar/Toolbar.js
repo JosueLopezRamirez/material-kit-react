@@ -36,7 +36,7 @@ export const Toolbar = (props) => {
         </Box>
       </Box>
       <Box sx={{ mt: 3 }}>
-        <Card>
+        <Card sx={{ borderRadius: 0 }}>
           <CardContent>
             <Grid container>
               <Grid item lg={onlySearch ? 12 : 4} md={onlySearch ? 12 : 4} sm={12}>

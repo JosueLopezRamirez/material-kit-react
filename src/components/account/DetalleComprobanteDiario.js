@@ -34,6 +34,11 @@ const useStyles = makeStyles({
     paddingTop: "15px",
     paddingBottom: "15px",
   },
+  grid: {
+    "& .ag-cell": {
+      height: "100% !important",
+    },
+  },
 });
 
 export const DetalleComprobanteDiario = (props) => {
@@ -116,7 +121,7 @@ export const DetalleComprobanteDiario = (props) => {
   return (
     <>
       <form onSubmit={formik.handleSubmit}>
-        <Card>
+        <Card sx={{ borderRadius: 0 }}>
           <CardContent classes={{ root: classes.cardContent }}>
             <Grid container spacing={3}>
               <Grid item md={12} xs={12} classes={{ item: classes.item }}>
@@ -193,7 +198,10 @@ export const DetalleComprobanteDiario = (props) => {
         </Card>
       </form>
 
-      <div className="ag-theme-alpine" style={{ height: 400, width: "100%", marginTop: 15 }}>
+      <div
+        className={"ag-theme-alpine " + classes.grid}
+        style={{ height: 400, width: "100%", marginTop: 15 }}
+      >
         <div>
           <Button
             startIcon={<AddCircleOutlined />}
@@ -207,6 +215,8 @@ export const DetalleComprobanteDiario = (props) => {
         </div>
         <AgGridReact
           rowData={gridData}
+          rowHeight={30}
+          headerHeight={30}
           columnDefs={columnDefs}
           defaultColDef={{
             editable: true,

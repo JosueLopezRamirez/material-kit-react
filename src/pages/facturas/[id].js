@@ -32,12 +32,15 @@ const Account = () => {
           py: 8,
         }}
       >
-        <Container maxWidth="lg">
+        <Container
+          maxWidth="lg"
+          sx={{ paddingLeft: "0px !important", paddingRight: "0px !important" }}
+        >
           <Typography sx={{ mb: 3 }} variant="h5">
             Detalle de facturas
           </Typography>
-          <Grid container spacing={3}>
-            <Grid item lg={12} md={12} xs={12}>
+          <Grid container>
+            <Grid item lg={12} md={12} xs={12} sx={{ paddingLeft: 0, paddingRight: 0 }}>
               {detalle && <DetalleFactura formData={detalle} isEdit={query.id !== "create"} />}
             </Grid>
           </Grid>

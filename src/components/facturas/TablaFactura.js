@@ -36,16 +36,16 @@ export const TablaFactura = ({ data, refetch, editar, ...rest }) => {
 
   const borrar = async (id) => {
     try {
-      await instanciaAxios.delete(`/comprobante-diario/${id}`);
-      toast.success("Comprobante de diario borrado correctamente");
+      await instanciaAxios.delete(`/facturas/${id}`);
+      toast.success("Factura borrado correctamente");
       refetch();
     } catch (error) {
-      toast.error("Error al borrar el comprobante de diario");
+      toast.error("Error al borrar la factura");
     }
   };
 
   return (
-    <Card {...rest}>
+    <Card sx={{ borderRadius: 0 }} {...rest}>
       <PerfectScrollbar>
         <Box sx={{ minWidth: 1050 }}>
           <Table>
@@ -67,14 +67,14 @@ export const TablaFactura = ({ data, refetch, editar, ...rest }) => {
                     <Tooltip title="Editar">
                       <Button
                         startIcon={<EditIcon style={{ color: "blue" }} />}
-                        onClick={() => router.push(`/account/${item.id}`)}
+                        onClick={() => router.push(`/facturas/${item.id}`)}
                         sx={{ mr: 1 }}
                       />
                     </Tooltip>
                     <Tooltip title="Ver historial">
                       <Button
                         startIcon={<SummarizeIcon style={{ color: "green" }} />}
-                        onClick={() => router.push(`/account/historial/${item.id}`)}
+                        onClick={() => router.push(`/facturas/historial/${item.id}`)}
                         sx={{ mr: 1 }}
                       />
                     </Tooltip>

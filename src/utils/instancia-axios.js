@@ -1,15 +1,16 @@
 import axios from "axios";
 
-let token = "";
-
-if (typeof window !== "undefined") {
-  token = localStorage.getItem("token");
-}
+const getToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("token");
+  }
+  return "";
+};
 
 const instanciaAxios = axios.create({
   baseURL: "http://localhost:5000",
   headers: {
-    authorization: token,
+    authorization: getToken(),
   },
 });
 

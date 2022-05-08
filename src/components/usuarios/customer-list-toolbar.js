@@ -43,7 +43,7 @@ export const CustomerListToolbar = (props) => {
         </Box>
       </Box>
       <Box sx={{ mt: 3 }}>
-        <Card>
+        <Card sx={{ borderRadius: 0 }}>
           <CardContent>
             <Box sx={{ maxWidth: "100%" }}>
               <TextField

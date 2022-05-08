@@ -7,8 +7,18 @@ import instanciaAxios from "src/utils/instancia-axios";
 import { useMemo, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { format } from "date-fns";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles({
+  grid: {
+    "& .ag-cell": {
+      height: "100% !important",
+    },
+  },
+});
 
 const Historial = () => {
+  const classes = useStyles();
   const { query } = useRouter();
   const [detalle, setDetalle] = useState([]);
 
@@ -55,11 +65,13 @@ const Historial = () => {
           <Grid container spacing={3}>
             <Grid item lg={12} md={12} xs={12}>
               <div
-                className="ag-theme-alpine"
+                className={"ag-theme-alpine " + classes.grid}
                 style={{ height: 600, width: "100%", marginTop: 15 }}
               >
                 <AgGridReact
                   rowData={detalle}
+                  rowHeight={30}
+                  headerHeight={30}
                   columnDefs={columnDefs}
                   defaultColDef={{
                     flex: 1,

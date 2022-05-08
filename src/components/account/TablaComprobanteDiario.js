@@ -45,7 +45,7 @@ export const TablaComprobanteDiario = ({ data, refetch, editar, ...rest }) => {
   };
 
   return (
-    <Card {...rest}>
+    <Card sx={{ borderRadius: 0 }} {...rest}>
       <PerfectScrollbar>
         <Box sx={{ minWidth: 1050 }}>
           <Table>
