@@ -9,6 +9,7 @@ import { User as UserIcon } from "../icons/user";
 import { Users as UsersIcon } from "../icons/users";
 import { XCircle as XCircleIcon } from "../icons/x-circle";
 import { NavItem } from "./nav-item";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 
 const items = [
   {
@@ -40,6 +41,11 @@ const items = [
     href: "/configuracion",
     icon: <CogIcon fontSize="small" />,
     title: "Configuracion",
+  },
+  {
+    href: "/documento",
+    icon: <InsertDriveFileIcon fontSize="small" />,
+    title: "Generador - documentos",
   },
   {
     href: "/404",
