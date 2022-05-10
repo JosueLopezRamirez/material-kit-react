@@ -51,7 +51,7 @@ export const DetalleComprobanteDiario = (props) => {
 
   const formik = useFormik({
     initialValues: {
-      empresaId: formData.empresaId,
+      empresaId: formData.estatico.documento.empresaId,
       nombre: formData.nombre,
       fecha: formData.fecha,
     },
@@ -74,9 +74,6 @@ export const DetalleComprobanteDiario = (props) => {
             comprobante: data,
             comprobanteItems: rowData,
           });
-        }
-        if (!respuesta.data.id) {
-          throw new Error();
         }
         toast.success(`Comprobante de diario ${isEdit ? "actualizado" : "creado"} correctamente`);
         router.push("/account/" + respuesta.data.id);

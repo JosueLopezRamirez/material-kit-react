@@ -23,11 +23,11 @@ const Historial = () => {
   const [detalle, setDetalle] = useState([]);
 
   useMount(async () => {
-    const detalle = await instanciaAxios.get("/historial-comprobante-diario/" + query.id);
+    const detalle = await instanciaAxios.get("/historial-facturas/" + query.id);
     setDetalle(
       detalle.data.map((row) => ({
         usuario: row.usuario.nombre,
-        comprobanteDeDiario: row.comprobanteDiario.nombre,
+        factura: row.factura.nombre,
         fechaDeCreacion: format(new Date(row.createdAt), "dd-MM-yyyy"),
         fechaDeActualizacion: format(new Date(row.updatedAt), "dd-MM-yyyy"),
         horaDeActualizacion: format(new Date(row.updatedAt), "h:mm a"),
@@ -37,7 +37,7 @@ const Historial = () => {
 
   const columnDefs = useMemo(
     () => [
-      { field: "comprobanteDeDiario" },
+      { field: "factura" },
       { field: "usuario", headerName: "Usuario" },
       { field: "fechaDeCreacion" },
       { field: "fechaDeActualizacion" },

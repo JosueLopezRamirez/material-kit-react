@@ -59,7 +59,7 @@ export const DetalleFactura = (props) => {
 
   const formik = useFormik({
     initialValues: {
-      empresaId: formData.empresaId,
+      empresaId: formData.estatico.documento.empresaId,
       nombre: formData.nombre,
       fecha: formData.fecha,
     },
@@ -82,9 +82,6 @@ export const DetalleFactura = (props) => {
             factura: data,
             facturaItems: rowData,
           });
-        }
-        if (!respuesta.data.id) {
-          throw new Error();
         }
         toast.success(`Factura ${isEdit ? "actualizada" : "creada"} correctamente`);
         router.push("/facturas/" + respuesta.data.id);

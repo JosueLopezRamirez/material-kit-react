@@ -3,12 +3,14 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Box, Button, Container, Grid, Link, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import instanciaAxios from "src/utils/instancia-axios";
 import { toast } from "react-toastify";
+import { useStore } from "src/utils/store";
 
 const Login = () => {
   const router = useRouter();
+  const setUsuario = useStore((state) => state.setUsuario);
   const formik = useFormik({
     initialValues: {
       correo: "",
@@ -21,12 +23,14 @@ const Login = () => {
     onSubmit: async (data) => {
       try {
         const respuesta = await instanciaAxios.post("/autenticacion/login", data);
+        setUsuario(respuesta.data.usuario);
         localStorage.setItem("token", respuesta.data.access_token);
         toast.success("Logeado Correctamente");
         setTimeout(() => {
           router.push("/");
         }, 1000);
       } catch (error) {
+        console.log(error);
         toast.error("Error al logear");
       }
     },
