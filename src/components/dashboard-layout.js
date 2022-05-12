@@ -3,6 +3,7 @@ import { Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { DashboardNavbar } from "./dashboard-navbar";
 import { DashboardSidebar } from "./dashboard-sidebar";
+import { useRouter } from "next/router";
 
 const DashboardLayoutRoot = styled("div")(({ theme }) => ({
   display: "flex",
@@ -15,13 +16,17 @@ const DashboardLayoutRoot = styled("div")(({ theme }) => ({
 }));
 
 export const DashboardLayout = (props) => {
+  const router = useRouter();
   const { children } = props;
   const [isSidebarOpen, setSidebarOpen] = useState(true);
+
+  console.log({ router });
 
   return (
     <>
       <DashboardLayoutRoot>
         <Box
+          className="zone-pages"
           sx={{
             display: "flex",
             flex: "1 1 auto",
@@ -32,7 +37,9 @@ export const DashboardLayout = (props) => {
           {children}
         </Box>
       </DashboardLayoutRoot>
-      {/* <DashboardNavbar onSidebarOpen={() => setSidebarOpen(true)} /> */}
+      {["/facturas/[id]", "/account/[id]"].includes(router.route) && (
+        <DashboardNavbar onSidebarOpen={() => setSidebarOpen(true)} />
+      )}
       <DashboardSidebar onClose={() => setSidebarOpen(false)} open={isSidebarOpen} />
     </>
   );

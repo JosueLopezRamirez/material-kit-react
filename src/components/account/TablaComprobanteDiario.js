@@ -71,13 +71,6 @@ export const TablaComprobanteDiario = ({ data, refetch, editar, ...rest }) => {
                         sx={{ mr: 1 }}
                       />
                     </Tooltip>
-                    <Tooltip title="Ver historial">
-                      <Button
-                        startIcon={<SummarizeIcon style={{ color: "green" }} />}
-                        onClick={() => router.push(`/account/historial/${item.id}`)}
-                        sx={{ mr: 1 }}
-                      />
-                    </Tooltip>
                     <Tooltip title="Dar de baja">
                       <Button
                         startIcon={<DeleteIcon style={{ color: "red" }} />}

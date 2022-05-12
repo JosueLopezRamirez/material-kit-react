@@ -12,6 +12,7 @@ import { NavItem } from "./nav-item";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useStore } from "src/utils/store";
+import { makeStyles } from "@mui/styles";
 
 const items = [
   {
@@ -56,9 +57,17 @@ const items = [
   },
 ];
 
+const useStyles = makeStyles({
+  item: {
+    paddingLeft: 0,
+    paddingRight: 0,
+  },
+});
+
 export const DashboardSidebar = (props) => {
   const { open, onClose } = props;
   const router = useRouter();
+  const classes = useStyles();
   const { usuario, setUsuario } = useStore();
 
   const paginas = useMemo(() => {
@@ -110,17 +119,23 @@ export const DashboardSidebar = (props) => {
       >
         <Box sx={{ flexGrow: 1, mt: 5 }}>
           {paginas.map((item) => (
-            <NavItem key={item.title} icon={item.icon} href={item.href} title={item.title} />
+            <NavItem
+              key={item.title}
+              icon={item.icon}
+              href={item.href}
+              title={item.title}
+              classes={{ root: classes.item }}
+            />
           ))}
         </Box>
         <Box>
           <Button
-            startIcon={<LogoutIcon fontSize="small" sx={{ ml: 2, color: "#FFFF" }} />}
+            startIcon={<LogoutIcon fontSize="small" sx={{ ml: 2, color: "#9CA3AF" }} />}
             onClick={cerrarSesion}
           >
             <span
               style={{
-                color: "#FFFF",
+                color: "#9CA3AF",
               }}
             >
               Cerrar sesion
