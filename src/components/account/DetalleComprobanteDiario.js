@@ -51,9 +51,9 @@ export const DetalleComprobanteDiario = (props) => {
 
   const formik = useFormik({
     initialValues: {
-      empresaId: formData.estatico.documento.empresaId,
-      nombre: formData.nombre,
-      fecha: formData.fecha,
+      empresaId: formData?.estatico?.documento?.empresaId,
+      nombre: formData?.nombre,
+      fecha: formData?.fecha,
     },
     validationSchema: Yup.object({
       nombre: Yup.string().max(255).required("Nombre es requerido"),
@@ -79,6 +79,7 @@ export const DetalleComprobanteDiario = (props) => {
         router.push("/account/" + respuesta.data.id);
         handleClose();
       } catch (error) {
+        console.log("error", error);
         toast.error(`Error al ${isEdit ? "actualizar" : "crear"} comprobante de diario`);
       }
     },

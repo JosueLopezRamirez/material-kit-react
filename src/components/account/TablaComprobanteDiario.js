@@ -12,6 +12,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  IconButton,
   Tooltip,
 } from "@mui/material";
 import { useRouter } from "next/router";
@@ -20,6 +21,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import instanciaAxios from "src/utils/instancia-axios";
 import { toast } from "react-toastify";
+import { FeatureFlag } from "../FeatureFlag";
 
 export const TablaComprobanteDiario = ({ data, refetch, editar, ...rest }) => {
   const [limit, setLimit] = useState(25);
@@ -64,13 +66,16 @@ export const TablaComprobanteDiario = ({ data, refetch, editar, ...rest }) => {
                   <TableCell>{item.estatico.documento.empresa.nombre}</TableCell>
                   <TableCell>{format(new Date(item.fecha), "dd-MM-yyyy")}</TableCell>
                   <TableCell>
-                    <Tooltip title="Editar">
-                      <Button
-                        startIcon={<EditIcon style={{ color: "blue" }} />}
-                        onClick={() => router.push(`/account/${item.id}`)}
-                        sx={{ mr: 1 }}
-                      />
-                    </Tooltip>
+                    <FeatureFlag pagina="Comprobantes de diario" permiso="editar">
+                      <Tooltip title="Editar">
+                        <IconButton
+                          onClick={() => router.push(`/account/${item.id}`)}
+                          sx={{ mr: 1 }}
+                        >
+                          <EditIcon style={{ color: "blue" }} />
+                        </IconButton>
+                      </Tooltip>
+                    </FeatureFlag>
                     <Tooltip title="Dar de baja">
                       <Button
                         startIcon={<DeleteIcon style={{ color: "red" }} />}
