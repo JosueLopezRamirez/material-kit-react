@@ -126,7 +126,7 @@ export const Historial = (props) => {
               borderBottomRightRadius: 5,
             }}
           >
-            <Button variant="contained" onClick={props.toggle}>
+            <Button size="small" variant="contained" onClick={props.toggle}>
               Cerrar
             </Button>
           </Grid>

@@ -22,6 +22,13 @@ import { AddCircleOutlined } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { isEmpty } from "lodash";
 
+const variablesColDefs = [
+  { field: "Nombre" },
+  { field: "Grupo" },
+  { field: "Valor" },
+  { field: "Tipo" },
+];
+
 const useStyles = makeStyles({
   cardHeader: {
     paddingTop: "10px",
@@ -31,8 +38,7 @@ const useStyles = makeStyles({
     paddingTop: "5px !important",
   },
   cardContent: {
-    paddingTop: "15px",
-    paddingBottom: "15px",
+    padding: "10px !important",
   },
   grid: {
     "& .ag-cell": {
@@ -45,6 +51,7 @@ export const Detalle = (props) => {
   const { formData, isEdit } = props;
   const classes = useStyles();
   const router = useRouter();
+  const variableRef = useRef();
   const [gridData, setGridData] = useState([]);
   const [state, setState] = useState({
     nombreColumna: "",
@@ -123,14 +130,18 @@ export const Detalle = (props) => {
     if (!state.nombreColumna) return;
     if (state.nombreGrupo) {
       index = newColDefs.findIndex((row) => row.headerName === state.nombreGrupo);
-      col = { headerName: state.nombreGrupo };
       if (index !== -1) {
         col = newColDefs[index];
         col = {
-          ...col,
+          headerName: state.nombreGrupo,
           children: col.children
             ? [...col.children, { field: state.nombreColumna }]
             : [{ field: state.nombreColumna }],
+        };
+      } else {
+        col = {
+          headerName: state.nombreGrupo,
+          children: [{ field: state.nombreColumna }],
         };
       }
     }
@@ -140,6 +151,7 @@ export const Detalle = (props) => {
     } else {
       newColDefs.push(col);
     }
+    console.log({ newColDefs });
     setColumnDefs(newColDefs);
   };
 
@@ -225,45 +237,35 @@ export const Detalle = (props) => {
       <Box sx={{ my: "16px" }}>
         <Card sx={{ borderRadius: 0 }}>
           <CardContent classes={{ root: classes.cardContent }}>
-            <Grid container spacing={3}>
-              <Grid item md={6} xs={12} classes={{ item: classes.item }}>
-                <TextField
-                  fullWidth
-                  label="Nombre de columna"
-                  name="nombreColumna"
-                  type="text"
-                  value={state.nombreColumna}
-                  onChange={onChange}
-                  margin="dense"
-                  variant="standard"
+            <div>
+              <div>
+                <Button
+                  startIcon={<AddCircleOutlined />}
+                  onClick={() => {
+                    variableRef.current?.api?.applyTransaction({ add: [{ isNewRow: true }] });
+                  }}
+                >
+                  Agregar fila
+                </Button>
+              </div>
+              <div
+                className={"ag-theme-alpine " + classes.grid}
+                style={{ height: 150, width: "100%" }}
+              >
+                <AgGridReact
+                  ref={variableRef}
+                  rowData={[]}
+                  rowHeight={30}
+                  headerHeight={30}
+                  columnDefs={variablesColDefs}
+                  defaultColDef={{
+                    editable: true,
+                    flex: 1,
+                  }}
                 />
-              </Grid>
-              <Grid item md={6} xs={12} classes={{ item: classes.item }}>
-                <TextField
-                  fullWidth
-                  label="Grupo"
-                  name="nombreGrupo"
-                  type="text"
-                  value={state.nombreGrupo}
-                  onChange={onChange}
-                  margin="dense"
-                  variant="standard"
-                />
-              </Grid>
-            </Grid>
+              </div>
+            </div>
           </CardContent>
-          <Divider />
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-start",
-              p: 2,
-            }}
-          >
-            <Button color="primary" variant="contained" onClick={onAgregar}>
-              Agregar
-            </Button>
-          </Box>
         </Card>
       </Box>
       <div

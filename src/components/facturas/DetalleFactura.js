@@ -85,8 +85,8 @@ export const DetalleFactura = (props) => {
         }
         toast.success(`Factura ${isEdit ? "actualizada" : "creada"} correctamente`);
         router.push("/facturas/" + respuesta.data.id);
-        handleClose();
       } catch (error) {
+        console.log({ error });
         toast.error(`Error al ${isEdit ? "actualizar" : "crear"} factura`);
       }
     },

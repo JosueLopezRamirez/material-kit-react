@@ -35,7 +35,7 @@ const Account = () => {
           </Typography>
           <Grid container spacing={3}>
             <Grid item lg={12} md={12} xs={12}>
-              <Detalle formData={detalle} isEdit={query.id !== "create"} />
+              <Detalle formData={detalle} isEdit={false} />
             </Grid>
           </Grid>
         </Container>

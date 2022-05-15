@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Card,
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -20,6 +21,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import instanciaAxios from "src/utils/instancia-axios";
 import { toast } from "react-toastify";
+import { FACTURAS, permiso } from "src/utils/Constants";
+import { FeatureFlag } from "../FeatureFlag";
 
 export const TablaFactura = ({ data, refetch, editar, ...rest }) => {
   const [limit, setLimit] = useState(25);
@@ -63,21 +66,21 @@ export const TablaFactura = ({ data, refetch, editar, ...rest }) => {
                   <TableCell>{item.nombre}</TableCell>
                   <TableCell>{item.estatico.documento.empresa.nombre}</TableCell>
                   <TableCell>{format(new Date(item.fecha), "dd-MM-yyyy")}</TableCell>
-                  <TableCell>
-                    <Tooltip title="Editar">
-                      <Button
-                        startIcon={<EditIcon style={{ color: "blue" }} />}
-                        onClick={() => router.push(`/facturas/${item.id}`)}
-                        sx={{ mr: 1 }}
-                      />
-                    </Tooltip>
-                    <Tooltip title="Dar de baja">
-                      <Button
-                        startIcon={<DeleteIcon style={{ color: "red" }} />}
-                        onClick={() => borrar(item.id)}
-                        sx={{ mr: 1 }}
-                      />
-                    </Tooltip>
+                  <TableCell style={{ display: "flex", gap: "3px" }}>
+                    <FeatureFlag pagina={FACTURAS} permiso={permiso.EDICION}>
+                      <Tooltip title="Editar">
+                        <IconButton onClick={() => router.push(`/facturas/${item.id}`)}>
+                          <EditIcon style={{ color: "blue" }} />
+                        </IconButton>
+                      </Tooltip>
+                    </FeatureFlag>
+                    <FeatureFlag pagina={FACTURAS} permiso={permiso.ELIMINACION}>
+                      <Tooltip title="Dar de baja">
+                        <IconButton onClick={() => borrar(item.id)}>
+                          <DeleteIcon style={{ color: "red" }} />
+                        </IconButton>
+                      </Tooltip>
+                    </FeatureFlag>
                   </TableCell>
                 </TableRow>
               ))}

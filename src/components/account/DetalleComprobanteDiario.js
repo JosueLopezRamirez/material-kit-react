@@ -77,9 +77,8 @@ export const DetalleComprobanteDiario = (props) => {
         }
         toast.success(`Comprobante de diario ${isEdit ? "actualizado" : "creado"} correctamente`);
         router.push("/account/" + respuesta.data.id);
-        handleClose();
       } catch (error) {
-        console.log("error", error);
+        console.log({ error });
         toast.error(`Error al ${isEdit ? "actualizar" : "crear"} comprobante de diario`);
       }
     },
@@ -106,7 +105,14 @@ export const DetalleComprobanteDiario = (props) => {
       { field: "descripcion" },
       { field: "parcial" },
       { field: "debito" },
-      { field: "haber" },
+      {
+        field: "haber",
+        valueGetter: (params) => {
+          const data = params.data;
+          const val = parseFloat(data.parcial ?? 0) - parseFloat(data.debito ?? 0);
+          return isNaN(val) ? 0 : val.toFixed(2);
+        },
+      },
     ],
     []
   );
