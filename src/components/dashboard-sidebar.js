@@ -46,9 +46,9 @@ const items = [
     title: "Configuracion",
   },
   {
-    href: "/documento",
+    href: "/generador",
     icon: <InsertDriveFileIcon fontSize="small" />,
-    title: "Generador - documentos",
+    title: "Generador",
   },
   {
     href: "/404",

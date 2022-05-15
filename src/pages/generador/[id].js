@@ -6,15 +6,18 @@ import { useRouter } from "next/router";
 import { useMount } from "react-use";
 import instanciaAxios from "src/utils/instancia-axios";
 import { useState } from "react";
+import { v4 as uuidV4 } from "uuid";
 
 const Account = () => {
   const { query } = useRouter();
   const [detalle, setDetalle] = useState({});
+  const [detalleKey, setDetalleKey] = useState(uuidV4());
 
   useMount(async () => {
-    // const detalle = await instanciaAxios.get("/dinamicos/" + query.id);
-    // console.log("detalle", detalle);
-    // setDetalle(detalle.data);
+    if (query.id === "create") return;
+    const detalle = await instanciaAxios.get(`/dinamicos/${query.id}`);
+    setDetalle(detalle.data);
+    setDetalleKey(uuidV4());
   });
 
   return (
@@ -31,11 +34,11 @@ const Account = () => {
       >
         <Container maxWidth="lg">
           <Typography sx={{ mb: 3 }} variant="h5">
-            Documento
+            Generador
           </Typography>
           <Grid container spacing={3}>
             <Grid item lg={12} md={12} xs={12}>
-              <Detalle formData={detalle} isEdit={false} />
+              <Detalle key={detalleKey} formData={detalle} isEdit={query.id !== "create"} />
             </Grid>
           </Grid>
         </Container>

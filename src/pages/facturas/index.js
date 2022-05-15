@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import instanciaAxios from "src/utils/instancia-axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import { FeatureFlag } from "src/components/FeatureFlag";
+import { FACTURAS, permiso } from "src/utils/Constants";
 
 let timeout = null;
 
@@ -61,6 +63,11 @@ const Customers = () => {
             onClickBtn={() => router.push("/facturas/create")}
             searchText="Buscar facturas"
             onSearch={onSearch}
+            wrapper={(children) => (
+              <FeatureFlag pagina={FACTURAS} permiso={permiso.EDICION}>
+                {children}
+              </FeatureFlag>
+            )}
           />
           <Box sx={{ mt: 3 }}>
             <TablaFactura data={data} refetch={getData} />

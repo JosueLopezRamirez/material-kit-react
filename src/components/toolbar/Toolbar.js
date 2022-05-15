@@ -15,6 +15,17 @@ import { Search as SearchIcon } from "../../icons/search";
 
 export const Toolbar = (props) => {
   const { title, btnText, onClickBtn, searchText, onSearch, onlySearch, ...rest } = props;
+
+  const renderButton = () => {
+    const element = (
+      <Button color="primary" variant="contained">
+        <span onClick={onClickBtn}>{btnText}</span>
+      </Button>
+    );
+    if (props.wrapper) return props.wrapper(element);
+    return element;
+  };
+
   return (
     <Box {...rest}>
       <Box
@@ -29,11 +40,7 @@ export const Toolbar = (props) => {
         <Typography sx={{ m: 1 }} variant="h4">
           {title}
         </Typography>
-        <Box sx={{ m: 1 }}>
-          <Button color="primary" variant="contained">
-            <span onClick={onClickBtn}>{btnText}</span>
-          </Button>
-        </Box>
+        <Box sx={{ m: 1 }}>{renderButton()}</Box>
       </Box>
       <Box sx={{ mt: 3 }}>
         <Card sx={{ borderRadius: 0 }}>

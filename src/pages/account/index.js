@@ -10,6 +10,8 @@ import { useEffect, useState } from "react";
 import instanciaAxios from "src/utils/instancia-axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import { FeatureFlag } from "src/components/FeatureFlag";
+import { COMPORBANTE_DIARIO, permiso } from "src/utils/Constants";
 
 let timeout = null;
 
@@ -64,6 +66,11 @@ const Customers = () => {
             onClickBtn={() => router.push("/account/create")}
             searchText="Buscar Comprobante de diario"
             onSearch={onSearch}
+            wrapper={(children) => (
+              <FeatureFlag pagina={COMPORBANTE_DIARIO} permiso={permiso.EDICION}>
+                {children}
+              </FeatureFlag>
+            )}
           />
           <Box sx={{ mt: 3 }}>
             <TablaComprobanteDiario data={data} refetch={getData} />

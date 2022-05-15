@@ -56,9 +56,9 @@ const Customers = () => {
       >
         <Container maxWidth={false}>
           <Toolbar
-            title="Documentos"
-            btnText={"Generar nuevo documento"}
-            onClickBtn={() => router.push("/documento/generador")}
+            title=""
+            btnText={"Generar nuevo"}
+            onClickBtn={() => router.push("/generador/create")}
             searchText="Buscar documento"
             onSearch={onSearch}
           />

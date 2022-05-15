@@ -61,13 +61,13 @@ export const Tabla = ({ data, refetch, editar, ...rest }) => {
               {data.slice(0, limit).map((item) => (
                 <TableRow hover key={item.id}>
                   <TableCell>{item.nombre}</TableCell>
-                  <TableCell>{item.dinamico.documento.empresa.nombre}</TableCell>
+                  <TableCell>{item.documento.empresa.nombre}</TableCell>
                   <TableCell>{format(new Date(item.fecha), "dd-MM-yyyy")}</TableCell>
                   <TableCell>
                     <Tooltip title="Editar">
                       <Button
                         startIcon={<EditIcon style={{ color: "blue" }} />}
-                        onClick={() => router.push(`/documento/${item.id}`)}
+                        onClick={() => router.push(`/generador/${item.id}`)}
                         sx={{ mr: 1 }}
                       />
                     </Tooltip>
