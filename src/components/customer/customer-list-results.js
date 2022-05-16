@@ -3,24 +3,24 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import PropTypes from "prop-types";
 import { format } from "date-fns";
 import {
-  Avatar,
   Box,
-  Button,
   Card,
-  Checkbox,
   Table,
   TableBody,
+  Tooltip,
   TableCell,
   TableHead,
+  IconButton,
   TablePagination,
   TableRow,
-  Typography,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import instanciaAxios from "src/utils/instancia-axios";
 import { toast } from "react-toastify";
 import EditarClienteModal from "./EditarCliente";
+import { CLIENTE, permiso } from "src/utils/Constants";
+import { FeatureFlag } from "../FeatureFlag";
 
 export const CustomerListResults = ({ clientes, refrescar, ...rest }) => {
   const [limit, setLimit] = useState(25);
@@ -81,18 +81,20 @@ export const CustomerListResults = ({ clientes, refrescar, ...rest }) => {
                   <TableCell>{cliente.telefono}</TableCell>
                   <TableCell>{format(new Date(cliente.createdAt), "dd-MM-yyyy")}</TableCell>
                   <TableCell>
-                    <Button
-                      startIcon={
-                        <EditIcon style={{ color: "blue" }} onClick={() => editar(cliente.id)} />
-                      }
-                      sx={{ mr: 1 }}
-                    />
-                    <Button
-                      startIcon={
-                        <DeleteIcon style={{ color: "red" }} onClick={() => borrar(cliente.id)} />
-                      }
-                      sx={{ mr: 1 }}
-                    />
+                    <FeatureFlag pagina={CLIENTE} permiso={permiso.EDICION}>
+                      <Tooltip title="Editar">
+                        <IconButton onClick={() => editar(cliente.id)}>
+                          <EditIcon style={{ color: "blue" }} />
+                        </IconButton>
+                      </Tooltip>
+                    </FeatureFlag>
+                    <FeatureFlag pagina={CLIENTE} permiso={permiso.ELIMINACION}>
+                      <Tooltip title="Borrado">
+                        <IconButton onClick={() => borrar(cliente.id)}>
+                          <DeleteIcon style={{ color: "red" }} />
+                        </IconButton>
+                      </Tooltip>
+                    </FeatureFlag>
                   </TableCell>
                 </TableRow>
               ))}

@@ -9,7 +9,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
+import { CLIENTE, permiso } from "src/utils/Constants";
 import { Search as SearchIcon } from "../../icons/search";
+import { FeatureFlag } from "../FeatureFlag";
 import CrearClienteModal from "./CrearCliente";
 
 export const CustomerListToolbar = (props) => {
@@ -37,9 +39,11 @@ export const CustomerListToolbar = (props) => {
           Clientes
         </Typography>
         <Box sx={{ m: 1 }}>
-          <Button color="primary" variant="contained">
-            <span onClick={() => setAbrirModal(true)}>Agregar Cliente</span>
-          </Button>
+          <FeatureFlag pagina={CLIENTE} permiso={permiso.EDICION}>
+            <Button color="primary" variant="contained">
+              <span onClick={() => setAbrirModal(true)}>Agregar Cliente</span>
+            </Button>
+          </FeatureFlag>
         </Box>
       </Box>
       <Box sx={{ mt: 3 }}>

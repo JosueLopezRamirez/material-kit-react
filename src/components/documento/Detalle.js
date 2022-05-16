@@ -29,20 +29,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { isEmpty } from "lodash";
-
-const variablesColDefs = [
-  { field: "", checkboxSelection: true, maxWidth: 35, editable: false },
-  { field: "Nombre" },
-  { field: "Grupo" },
-  { field: "Valor" },
-  {
-    field: "Tipo",
-    cellEditor: "agSelectCellEditor",
-    cellEditorParams: {
-      values: ["Numerico", "Texto", "Lista", "Fecha"],
-    },
-  },
-];
+import { InputOnlyLettersRenderer } from "../renderers";
 
 const useStyles = makeStyles({
   cardHeader: {
@@ -60,6 +47,10 @@ const useStyles = makeStyles({
       height: "100% !important",
     },
   },
+  variableCell: {
+    paddingLeft: "0px !important",
+    paddingRight: "0px !important",
+  },
 });
 
 export const Detalle = (props) => {
@@ -71,6 +62,28 @@ export const Detalle = (props) => {
   const [expanded, setExpanded] = useState(false);
   const [clientes, setClientes] = useState([]);
   const [variableRowData, setVariableRowData] = useState([]);
+
+  const variablesColDefs = useMemo(
+    () => [
+      { field: "", checkboxSelection: true, maxWidth: 35, editable: false },
+      {
+        field: "Nombre",
+        cellClass: classes.variableCell,
+        //cellRenderer: "inputOnlyLetters",
+        //editable: false,
+      },
+      { field: "Grupo" },
+      { field: "Valor" },
+      {
+        field: "Tipo",
+        cellEditor: "agSelectCellEditor",
+        cellEditorParams: {
+          values: ["Numerico", "Texto", "Lista", "Fecha"],
+        },
+      },
+    ],
+    []
+  );
 
   const formik = useFormik({
     initialValues: {
@@ -128,7 +141,8 @@ export const Detalle = (props) => {
       if (!data.Valor) return 1500;
       else return data.Valor;
     }
-    if (data.Tipo === "Text") {
+    console.log({ Tipo: data.Tipo, Valor: data.Valor });
+    if (data.Tipo === "Texto") {
       if (!data.Valor) return "Documento";
       else return data.Valor;
     }
@@ -281,7 +295,7 @@ export const Detalle = (props) => {
                           children: [
                             {
                               field: node.data.Nombre,
-                              ...options,
+                              //...options,
                             },
                           ],
                         };
@@ -293,7 +307,7 @@ export const Detalle = (props) => {
                             ...colDefs[index].children,
                             {
                               field: node.data.Nombre,
-                              ...options,
+                              //...options,
                             },
                           ],
                         };
@@ -325,6 +339,9 @@ export const Detalle = (props) => {
                   defaultColDef={{
                     editable: true,
                     flex: 1,
+                  }}
+                  components={{
+                    inputOnlyLetters: InputOnlyLettersRenderer,
                   }}
                 />
               </div>

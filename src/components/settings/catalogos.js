@@ -82,6 +82,7 @@ export const Permisos = (props) => {
       },
       {
         field: "ver",
+        headerName: "Visualizacion",
         cellRenderer: "switchRenderer",
         sortable: false,
         rezisable: false,

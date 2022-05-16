@@ -3,17 +3,15 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import PropTypes from "prop-types";
 import { format } from "date-fns";
 import {
-  Avatar,
   Box,
   Button,
   Card,
-  Checkbox,
   Table,
   TableBody,
   TableCell,
+  IconButton,
   TableHead,
   TablePagination,
-  TableRow,
   Typography,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
@@ -83,18 +81,12 @@ export const CustomerListResults = ({ clientes, refrescar, ...rest }) => {
                   <TableCell>{cliente.rol.nombre}</TableCell>
                   <TableCell>{format(new Date(cliente.createdAt), "dd-MM-yyyy")}</TableCell>
                   <TableCell>
-                    <Button
-                      startIcon={
-                        <EditIcon style={{ color: "blue" }} onClick={() => editar(cliente.id)} />
-                      }
-                      sx={{ mr: 1 }}
-                    />
-                    <Button
-                      startIcon={
-                        <DeleteIcon style={{ color: "red" }} onClick={() => borrar(cliente.id)} />
-                      }
-                      sx={{ mr: 1 }}
-                    />
+                    <IconButton onClick={() => editar(cliente.id)}>
+                      <EditIcon style={{ color: "blue" }} />
+                    </IconButton>
+                    <IconButton onClick={() => borrar(cliente.id)}>
+                      <DeleteIcon style={{ color: "red" }} />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}

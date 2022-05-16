@@ -90,3 +90,35 @@ export const SelectRenderer = forwardRef((props, ref) => {
     </TextField>
   );
 });
+
+export const InputOnlyLettersRenderer = forwardRef((props, ref) => {
+  const classes = useStyles();
+
+  const [value, setValue] = useState(props.value);
+
+  useImperativeHandle(ref, () => {
+    return {
+      getValue() {
+        return value;
+      },
+    };
+  });
+
+  const onChange = (event) => {
+    const result = event.target.value.replace(/[^a-z]/gi, "");
+    props.setValue(result);
+    setValue(result);
+  };
+
+  return (
+    <TextField
+      type="text"
+      fullWidth
+      InputProps={{ classes: { root: classes.selectInput } }}
+      classes={{ root: classes.select }}
+      ref={ref}
+      value={value}
+      onChange={onChange}
+    />
+  );
+});
