@@ -98,14 +98,13 @@ export const Detalle = (props) => {
         const newData = {
           ...data,
           columnas: JSON.stringify(getVariableRowData()),
-          esPlantilla: true,
         };
         if (isEdit) {
           respuesta = await instanciaAxios.patch(`/plantillas/` + formData.id, newData);
         } else {
           respuesta = await instanciaAxios.post(`/plantillas/`, newData);
+          router.push("/generador/" + respuesta.data.id);
         }
-        router.push("/generador/" + respuesta.data.id);
       } catch (error) {
         console.log({ error });
       }

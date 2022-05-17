@@ -42,7 +42,7 @@ export const Toolbar = (props) => {
         </Typography>
         <Box sx={{ m: 1 }}>{renderButton()}</Box>
       </Box>
-      <Box sx={{ mt: 3 }}>
+      {/* <Box sx={{ mt: 3 }}>
         <Card sx={{ borderRadius: 0 }}>
           <CardContent>
             <Grid container>
@@ -67,7 +67,7 @@ export const Toolbar = (props) => {
             </Grid>
           </CardContent>
         </Card>
-      </Box>
+      </Box> */}
     </Box>
   );
 };

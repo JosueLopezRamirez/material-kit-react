@@ -60,7 +60,9 @@ export const Detalle = (props) => {
   const variableRef = useRef();
   const gridRef = useRef();
   const [expanded, setExpanded] = useState(false);
+  const [plantillaSeleccionada, setPlantillaSeleccionada] = useState(null);
   const [clientes, setClientes] = useState([]);
+  const [plantillas, setPlantillas] = useState([]);
   const [variableRowData, setVariableRowData] = useState([]);
 
   const variablesColDefs = useMemo(
@@ -87,10 +89,16 @@ export const Detalle = (props) => {
 
   const formik = useFormik({
     initialValues: {
-      nombre: formData.nombre,
+      empresaId: formData?.documento?.empresaId,
+      plantillaId: formData?.plantillaId,
+      nombre: formData?.nombre,
+      fecha: formData?.fecha,
     },
     validationSchema: Yup.object({
       nombre: Yup.string().max(255).required("Nombre es requerido"),
+      empresaId: Yup.string().max(255).required("Cliente es requerido"),
+      plantillaId: Yup.string().max(255).required("Plantilla es requerida"),
+      fecha: Yup.string().max(255).required("Fecha es requerido"),
     }),
     onSubmit: async (data) => {
       try {
@@ -112,6 +120,107 @@ export const Detalle = (props) => {
     },
   });
 
+  useEffect(() => {
+    if (!plantillaSeleccionada) return;
+    const columns = JSON.parse(plantillaSeleccionada.columnas);
+    createColumnDefs(columns);
+  }, [plantillaSeleccionada]);
+
+  const numberNewValueHandler = (params) => {
+    var valueAsNumber = parseFloat(params.newValue);
+    var field = params.colDef.field;
+    var data = params.data;
+    data[field] = valueAsNumber;
+    return true;
+  };
+
+  const createColumnDefs = (columns = []) => {
+    let colDefs = [];
+    let colDef = {};
+    columns?.forEach((column) => {
+      let options = {};
+      if (column.Tipo === "Texto") {
+        if (column.Valor) {
+          options = {
+            valueGetter: (params) => params.node.data[column.Nombre] ?? column.Valor,
+          };
+        }
+      }
+      if (column.Tipo === "Lista") {
+        if (column.Valor) {
+          options = {
+            cellEditor: "agSelectCellEditor",
+            cellEditorParams: {
+              values: column.Valor.split(","),
+            },
+          };
+        }
+      }
+      if (column.Tipo === "Numerico") {
+        if (column.Valor) {
+          if (isNaN(column.Valor)) {
+            const expresiones = column.Valor.split(" ");
+            let newExpression = "";
+            expresiones.forEach((expression) => {
+              if (["+", "-", "/", "*"].includes(expression)) {
+                newExpression = newExpression + " ".concat(expression);
+              } else {
+                newExpression = newExpression + `parseFloat(data.${expression} ?? 0)`;
+              }
+            });
+            console.log({ newExpression });
+            options = {
+              valueGetter: newExpression,
+              valueFormatter: (params) => parseFloat(params.value).toFixed(2),
+            };
+          } else {
+            options = {
+              valueSetter: numberNewValueHandler,
+              // valueGetter: (params) =>
+              //   parseFloat(params.node.data[column.Nombre]) ?? parseFloat(column.Valor),
+            };
+          }
+        }
+      }
+      if (column.Tipo === "Fecha") {
+        if (column.Valor) {
+          options = {
+            valueGetter: (params) =>
+              params.node.data[column.Nombre] ?? format(new Date(column.Valor), "dd-MM-yyyy"),
+          };
+        }
+      }
+      const index = colDefs.findIndex((col) => col.headerName === column.Grupo);
+      if (index === -1) {
+        colDef = {
+          headerName: column.Grupo,
+          children: [
+            {
+              field: column.Nombre,
+              ...options,
+            },
+          ],
+        };
+        colDefs.push(colDef);
+      } else {
+        colDefs[index] = {
+          ...colDefs[index],
+          children: [
+            ...colDefs[index].children,
+            {
+              field: column.Nombre,
+              ...options,
+            },
+          ],
+        };
+      }
+    });
+    gridRef.current.api.setColumnDefs([
+      { field: "", checkboxSelection: true, width: 35, maxWidth: 35 },
+      ...colDefs,
+    ]);
+  };
+
   const getVariableRowData = () => {
     let rowData = [];
     variableRef?.current?.api?.forEachNodeAfterFilterAndSort((node) => {
@@ -122,8 +231,9 @@ export const Detalle = (props) => {
 
   useMount(() => {
     obtenerClientes();
+    obtenerPlantillas();
     if (isEmpty(formData)) return;
-    const variablesRows = JSON.parse(formData.columnas);
+    const variablesRows = JSON.parse(formData.filas);
     setVariableRowData(variablesRows);
   });
 
@@ -132,24 +242,9 @@ export const Detalle = (props) => {
     setClientes(empresas.data);
   };
 
-  const getValue = (data) => {
-    if (data.Tipo === "Numerico") {
-      if (!data.Valor) return 1500;
-      else return data.Valor;
-    }
-    console.log({ Tipo: data.Tipo, Valor: data.Valor });
-    if (data.Tipo === "Texto") {
-      if (!data.Valor) return "Documento";
-      else return data.Valor;
-    }
-    if (data.Tipo === "Fecha") {
-      if (!data.Valor) return "05/15/2022";
-      else return data.Valor;
-    }
-    if (data.Tipo === "Lista") {
-      if (!data.Valor) return "Option 1";
-      else return data.Valor.split(",")[0];
-    }
+  const obtenerPlantillas = async () => {
+    const response = await instanciaAxios.get(`/plantillas`);
+    setPlantillas(response.data);
   };
 
   return (
@@ -158,7 +253,50 @@ export const Detalle = (props) => {
         <Card sx={{ borderRadius: 0 }}>
           <CardContent classes={{ root: classes.cardContent }}>
             <Grid container spacing={3}>
-              <Grid item md={12} xs={12} classes={{ item: classes.item }}>
+              <Grid item md={6} xs={12} classes={{ item: classes.item }}>
+                <TextField
+                  fullWidth
+                  label="Plantilla"
+                  name="plantillaId"
+                  select
+                  value={formik.values.plantillaId}
+                  onChange={(e) => {
+                    setPlantillaSeleccionada(plantillas.find((p) => p.id === e.target.value));
+                    formik.handleChange(e);
+                  }}
+                  error={Boolean(formik.touched.plantillaId && formik.errors.plantillaId)}
+                  helperText={formik.touched.plantillaId && formik.errors.plantillaId}
+                  onBlur={formik.handleBlur}
+                  margin="dense"
+                  variant="standard"
+                  disabled={isEdit}
+                >
+                  {plantillas.map((option) => (
+                    <MenuItem value={option.id}>{option.nombre}</MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item md={6} xs={12} classes={{ item: classes.item }}>
+                <TextField
+                  fullWidth
+                  label="Clientes"
+                  name="empresaId"
+                  select
+                  value={formik.values.empresaId}
+                  onChange={formik.handleChange}
+                  error={Boolean(formik.touched.empresaId && formik.errors.empresaId)}
+                  helperText={formik.touched.empresaId && formik.errors.empresaId}
+                  onBlur={formik.handleBlur}
+                  margin="dense"
+                  variant="standard"
+                  disabled={isEdit}
+                >
+                  {clientes.map((option) => (
+                    <MenuItem value={option.id}>{option.nombre}</MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item md={6} xs={12} classes={{ item: classes.item }}>
                 <TextField
                   fullWidth
                   label="Nombre"
@@ -172,6 +310,28 @@ export const Detalle = (props) => {
                   margin="dense"
                   variant="standard"
                 />
+              </Grid>
+              <Grid item md={6} xs={12} classes={{ item: classes.item }}>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    label="Fecha"
+                    name="fecha"
+                    value={formik.values.fecha}
+                    onChange={(val) => {
+                      formik.setFieldValue("fecha", val);
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        name="fecha"
+                        fullWidth
+                        margin="dense"
+                        disabled
+                        variant="standard"
+                      />
+                    )}
+                  />
+                </LocalizationProvider>
               </Grid>
             </Grid>
           </CardContent>
@@ -202,7 +362,7 @@ export const Detalle = (props) => {
                 <Button
                   startIcon={<AddCircleOutlined />}
                   onClick={() => {
-                    variableRef.current?.api?.applyTransaction({ add: [{ isNewRow: true }] });
+                    gridRef.current?.api?.applyTransaction({ add: [{ isNewRow: true }] });
                   }}
                 >
                   Agregar fila
@@ -210,84 +370,13 @@ export const Detalle = (props) => {
                 <Button
                   startIcon={<DeleteIcon />}
                   onClick={() => {
-                    const gridApi = variableRef.current?.api;
+                    const gridApi = gridRef.current?.api;
                     const selectedRows = gridApi.getSelectedRows();
                     gridApi?.applyTransaction({ remove: selectedRows });
                   }}
                 >
                   Borrar
                 </Button>
-                {/* <Button
-                  startIcon={<VisibilityIcon />}
-                  onClick={() => {
-                    let colDefs = [];
-                    let rowData = [];
-                    variableRef.current.api.forEachNodeAfterFilterAndSort((node) => {
-                      let options = {};
-                      if (node.data.Tipo === "Lista")
-                        options = {
-                          cellEditor: "agSelectCellEditor",
-                          cellEditorParams: {
-                            values: node.data?.Valor?.split(","),
-                          },
-                        };
-                      if (node.data.Tipo === "Texto") {
-                        options = {
-                          valueGetter: (params) => {
-                            if (params.node.Valor) return params.node.Valor;
-                            return node.data.Valor;
-                          },
-                        };
-                      }
-                      if (node.data.Tipo === "Numerico") {
-                        const expression = node?.data?.Valor?.split(" ");
-                        console.log("expression", expression);
-                        options = {
-                          editable: false,
-                          valueGetter: (params) => {
-                            if (params?.node?.Valor) return params?.node?.Valor;
-                            return node?.data?.Valor;
-                          },
-                        };
-                      }
-                      let colDef = {};
-                      const index = colDefs.findIndex((col) => col.headerName === node.data.Grupo);
-                      if (index === -1) {
-                        colDef = {
-                          headerName: node.data.Grupo,
-                          children: [
-                            {
-                              field: node.data.Nombre,
-                              //...options,
-                            },
-                          ],
-                        };
-                        colDefs.push(colDef);
-                      } else {
-                        colDefs[index] = {
-                          ...colDefs[index],
-                          children: [
-                            ...colDefs[index].children,
-                            {
-                              field: node.data.Nombre,
-                              //...options,
-                            },
-                          ],
-                        };
-                      }
-                      rowData = {
-                        ...rowData,
-                        [node.data.Nombre]: getValue(node.data),
-                      };
-                    });
-                    gridRef.current.api.setColumnDefs(colDefs);
-                    setExpanded(true);
-                    console.log({ rowData, coldef: gridRef.current.api.getColumnDefs() });
-                    gridRef.current.api.setRowData(Array(8).fill(rowData));
-                  }}
-                >
-                  Visualizar
-                </Button> */}
               </div>
               <div
                 className={"ag-theme-alpine " + classes.grid}
@@ -295,11 +384,11 @@ export const Detalle = (props) => {
               >
                 <AgGridReact
                   ref={gridRef}
-                  rowData={[]}
+                  rowData={variableRowData}
                   rowHeight={30}
                   headerHeight={30}
                   defaultColDef={{
-                    editable: false,
+                    editable: true,
                     flex: 1,
                   }}
                 />
