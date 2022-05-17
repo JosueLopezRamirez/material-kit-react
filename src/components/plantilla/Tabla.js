@@ -37,7 +37,7 @@ export const Tabla = ({ data, refetch, editar, ...rest }) => {
 
   const borrar = async (id) => {
     try {
-      await instanciaAxios.delete(`/dinamicos/${id}`);
+      await instanciaAxios.delete(`/plantillas/${id}`);
       toast.success("Documento borrado correctamente");
       refetch();
     } catch (error) {
@@ -64,7 +64,7 @@ export const Tabla = ({ data, refetch, editar, ...rest }) => {
                   <TableCell>{format(new Date(item.createdAt), "dd-MM-yyyy")}</TableCell>
                   <TableCell>
                     <Tooltip title="Editar">
-                      <IconButton onClick={() => router.push(`/documentos/${item.id}`)}>
+                      <IconButton onClick={() => router.push(`/generador/${item.id}`)}>
                         <EditIcon style={{ color: "blue" }} />
                       </IconButton>
                     </Tooltip>

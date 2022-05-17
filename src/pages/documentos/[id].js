@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { Box, Container, Grid, Typography } from "@mui/material";
-import { Detalle } from "../../components/plantilla/Detalle";
+import { Detalle } from "../../components/documento/Detalle";
 import { DashboardLayout } from "../../components/dashboard-layout";
 import { useRouter } from "next/router";
 import { useMount } from "react-use";
@@ -15,8 +15,9 @@ const Account = () => {
 
   useMount(async () => {
     if (query.id === "create") return;
-    const detalle = await instanciaAxios.get(`/plantillas/${query.id}`);
-    setDetalle(detalle.data);
+    const detalle = await instanciaAxios.get(`/dinamicos/${query.id}`);
+    console.log(detalle.data);
+    // setDetalle(detalle.data);
     setDetalleKey(uuidV4());
   });
 
@@ -34,7 +35,7 @@ const Account = () => {
       >
         <Container maxWidth="lg">
           <Typography sx={{ mb: 3 }} variant="h5">
-            Plantilla
+            Documento
           </Typography>
           <Grid container spacing={3}>
             <Grid item lg={12} md={12} xs={12}>

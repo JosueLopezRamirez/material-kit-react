@@ -26,7 +26,12 @@ const App = (props) => {
       </Head>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <ThemeProvider theme={theme}>
-          <ToastContainer autoClose={2000} closeOnClick={true} hideProgressBar={true} />
+          <ToastContainer
+            autoClose={2000}
+            closeOnClick={true}
+            hideProgressBar={true}
+            theme="colored"
+          />
           <CssBaseline />
           {getLayout(
             <RouteGuard>

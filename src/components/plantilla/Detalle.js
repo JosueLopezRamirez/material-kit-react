@@ -101,11 +101,11 @@ export const Detalle = (props) => {
           esPlantilla: true,
         };
         if (isEdit) {
-          respuesta = await instanciaAxios.patch(`/dinamicos/` + formData.id, newData);
+          respuesta = await instanciaAxios.patch(`/plantillas/` + formData.id, newData);
         } else {
-          respuesta = await instanciaAxios.post(`/dinamicos/`, newData);
+          respuesta = await instanciaAxios.post(`/plantillas/`, newData);
         }
-        router.push("/documentos/" + respuesta.data.id);
+        router.push("/generador/" + respuesta.data.id);
       } catch (error) {
         console.log({ error });
       }
@@ -217,7 +217,7 @@ export const Detalle = (props) => {
                 >
                   Borrar
                 </Button>
-                {/* <Button
+                <Button
                   startIcon={<VisibilityIcon />}
                   onClick={() => {
                     let colDefs = [];
@@ -287,20 +287,24 @@ export const Detalle = (props) => {
                   }}
                 >
                   Visualizar
-                </Button> */}
+                </Button>
               </div>
               <div
                 className={"ag-theme-alpine " + classes.grid}
-                style={{ height: 400, width: "100%", marginTop: 15 }}
+                style={{ height: 200, width: "100%" }}
               >
                 <AgGridReact
-                  ref={gridRef}
-                  rowData={[]}
+                  ref={variableRef}
+                  rowData={variableRowData}
                   rowHeight={30}
                   headerHeight={30}
+                  columnDefs={variablesColDefs}
                   defaultColDef={{
-                    editable: false,
+                    editable: true,
                     flex: 1,
+                  }}
+                  components={{
+                    inputOnlyLetters: InputOnlyLettersRenderer,
                   }}
                 />
               </div>
@@ -308,6 +312,32 @@ export const Detalle = (props) => {
           </CardContent>
         </Card>
       </Box>
+      <Accordion expanded={expanded} onChange={() => setExpanded(false)}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+          Visualizacion
+        </AccordionSummary>
+        <AccordionDetails>
+          <div
+            className={"ag-theme-alpine " + classes.grid}
+            style={{ height: 400, width: "100%", marginTop: 15 }}
+          >
+            <AgGridReact
+              ref={gridRef}
+              rowData={[]}
+              rowHeight={30}
+              headerHeight={30}
+              defaultColDef={{
+                editable: false,
+                flex: 1,
+              }}
+            />
+          </div>
+        </AccordionDetails>
+      </Accordion>
     </>
   );
 };

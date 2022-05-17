@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { Box, Container } from "@mui/material";
-import { Tabla } from "../../components/plantilla/Tabla";
+import { Tabla } from "../../components/documento/Tabla";
 import { Toolbar } from "../../components/toolbar/Toolbar";
 import { DashboardLayout } from "../../components/dashboard-layout";
 import { useEffect, useState } from "react";
@@ -21,17 +21,17 @@ const Customers = () => {
 
   const getData = async (searchText = "") => {
     try {
-      const response = await instanciaAxios.get("/plantillas", {
+      const response = await instanciaAxios.get("/dinamicos", {
         params: {
           searchText: searchText,
         },
       });
       setData(response.data);
       if (response.data.length === 0) {
-        toast.warning("No se encontraron plantillas");
+        toast.warning("No se encontraron documentos");
       }
     } catch (error) {
-      toast.error("Error al obtener plantillas");
+      toast.error("Error al obtener documentos");
     }
   };
 
@@ -56,10 +56,10 @@ const Customers = () => {
       >
         <Container maxWidth={false}>
           <Toolbar
-            title="Plantillas"
-            btnText={"Nueva plantilla"}
-            onClickBtn={() => router.push("/generador/create")}
-            searchText="Buscar plantilla"
+            title="Documentos"
+            btnText={"Nueva documento"}
+            onClickBtn={() => router.push("/documentos/create")}
+            searchText="Buscar documento"
             onSearch={onSearch}
           />
           <Box sx={{ mt: 3 }}>

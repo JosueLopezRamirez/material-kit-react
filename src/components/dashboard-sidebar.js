@@ -12,6 +12,7 @@ import { NavItem } from "./nav-item";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useStore } from "src/utils/store";
+import CategoryIcon from "@mui/icons-material/Category";
 import { makeStyles } from "@mui/styles";
 
 const items = [
@@ -47,8 +48,13 @@ const items = [
   },
   {
     href: "/generador",
-    icon: <InsertDriveFileIcon fontSize="small" />,
+    icon: <CategoryIcon fontSize="small" />,
     title: "Plantilla de documentos",
+  },
+  {
+    href: "/documentos",
+    icon: <InsertDriveFileIcon fontSize="small" />,
+    title: "Documentos",
   },
   {
     href: "/404",
