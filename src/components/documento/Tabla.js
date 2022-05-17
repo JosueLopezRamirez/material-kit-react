@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Card,
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -36,7 +37,7 @@ export const Tabla = ({ data, refetch, editar, ...rest }) => {
 
   const borrar = async (id) => {
     try {
-      await instanciaAxios.delete(`/dinamicos/${id}`);
+      await instanciaAxios.delete(`/plantillas/${id}`);
       toast.success("Documento borrado correctamente");
       refetch();
     } catch (error) {
@@ -52,38 +53,25 @@ export const Tabla = ({ data, refetch, editar, ...rest }) => {
             <TableHead>
               <TableRow>
                 <TableCell>Nombre</TableCell>
-                <TableCell>Cliente</TableCell>
-                <TableCell>Fecha</TableCell>
+                <TableCell>Fecha creacion</TableCell>
                 <TableCell>Acciones</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.slice(0, limit).map((item) => (
+              {data?.slice(0, limit)?.map((item) => (
                 <TableRow hover key={item.id}>
                   <TableCell>{item.nombre}</TableCell>
-                  <TableCell>{item.documento.empresa.nombre}</TableCell>
-                  <TableCell>{format(new Date(item.fecha), "dd-MM-yyyy")}</TableCell>
+                  <TableCell>{format(new Date(item.createdAt), "dd-MM-yyyy")}</TableCell>
                   <TableCell>
                     <Tooltip title="Editar">
-                      <Button
-                        startIcon={<EditIcon style={{ color: "blue" }} />}
-                        onClick={() => router.push(`/generador/${item.id}`)}
-                        sx={{ mr: 1 }}
-                      />
+                      <IconButton onClick={() => router.push(`/generador/${item.id}`)}>
+                        <EditIcon style={{ color: "blue" }} />
+                      </IconButton>
                     </Tooltip>
-                    {/* <Tooltip title="Ver historial">
-                      <Button
-                        startIcon={<SummarizeIcon style={{ color: "green" }} />}
-                        onClick={() => router.push(`/documento/historial/${item.id}`)}
-                        sx={{ mr: 1 }}
-                      />
-                    </Tooltip> */}
                     <Tooltip title="Dar de baja">
-                      <Button
-                        startIcon={<DeleteIcon style={{ color: "red" }} />}
-                        onClick={() => borrar(item.id)}
-                        sx={{ mr: 1 }}
-                      />
+                      <IconButton onClick={() => borrar(item.id)}>
+                        <DeleteIcon style={{ color: "red" }} />
+                      </IconButton>
                     </Tooltip>
                   </TableCell>
                 </TableRow>

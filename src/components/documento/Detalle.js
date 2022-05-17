@@ -87,14 +87,10 @@ export const Detalle = (props) => {
 
   const formik = useFormik({
     initialValues: {
-      empresaId: formData?.documento?.empresaId,
       nombre: formData.nombre,
-      fecha: formData.fecha,
     },
     validationSchema: Yup.object({
       nombre: Yup.string().max(255).required("Nombre es requerido"),
-      empresaId: Yup.string().max(255).required("Cliente es requerido"),
-      fecha: Yup.string().max(255).required("Fecha es requerido"),
     }),
     onSubmit: async (data) => {
       try {
@@ -105,9 +101,9 @@ export const Detalle = (props) => {
           esPlantilla: true,
         };
         if (isEdit) {
-          respuesta = await instanciaAxios.patch(`/dinamicos/` + formData.id, newData);
+          respuesta = await instanciaAxios.patch(`/plantillas/` + formData.id, newData);
         } else {
-          respuesta = await instanciaAxios.post(`/dinamicos/`, newData);
+          respuesta = await instanciaAxios.post(`/plantillas/`, newData);
         }
         router.push("/generador/" + respuesta.data.id);
       } catch (error) {
@@ -150,6 +146,10 @@ export const Detalle = (props) => {
       if (!data.Valor) return "05/15/2022";
       else return data.Valor;
     }
+    if (data.Tipo === "Lista") {
+      if (!data.Valor) return "Option 1";
+      else return data.Valor.split(",")[0];
+    }
   };
 
   return (
@@ -158,27 +158,7 @@ export const Detalle = (props) => {
         <Card sx={{ borderRadius: 0 }}>
           <CardContent classes={{ root: classes.cardContent }}>
             <Grid container spacing={3}>
-              <Grid item md={6} xs={12} classes={{ item: classes.item }}>
-                <TextField
-                  fullWidth
-                  label="Clientes"
-                  name="empresaId"
-                  select
-                  value={formik.values.empresaId}
-                  onChange={formik.handleChange}
-                  error={Boolean(formik.touched.empresaId && formik.errors.empresaId)}
-                  helperText={formik.touched.empresaId && formik.errors.empresaId}
-                  onBlur={formik.handleBlur}
-                  margin="dense"
-                  variant="standard"
-                  disabled={isEdit}
-                >
-                  {clientes.map((option) => (
-                    <MenuItem value={option.id}>{option.nombre}</MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item md={6} xs={12} classes={{ item: classes.item }}>
+              <Grid item md={12} xs={12} classes={{ item: classes.item }}>
                 <TextField
                   fullWidth
                   label="Nombre"
@@ -193,28 +173,6 @@ export const Detalle = (props) => {
                   variant="standard"
                 />
               </Grid>
-              <Grid item md={6} xs={12} classes={{ item: classes.item }}>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    label="Fecha"
-                    name="fecha"
-                    value={formik.values.fecha}
-                    onChange={(val) => {
-                      formik.setFieldValue("fecha", val);
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        name="fecha"
-                        fullWidth
-                        margin="dense"
-                        disabled
-                        variant="standard"
-                      />
-                    )}
-                  />
-                </LocalizationProvider>
-              </Grid>
             </Grid>
           </CardContent>
           <Divider />
@@ -225,7 +183,12 @@ export const Detalle = (props) => {
               p: 2,
             }}
           >
-            <Button color="primary" variant="contained" type="submit" disabled={!formik.isValid}>
+            <Button
+              color="primary"
+              variant="contained"
+              type="submit"
+              disabled={!formik.isValid && !getVariableRowData().length}
+            >
               Guardar
             </Button>
           </Box>

@@ -21,7 +21,7 @@ const Customers = () => {
 
   const getData = async (searchText = "") => {
     try {
-      const response = await instanciaAxios.get("/dinamicos", {
+      const response = await instanciaAxios.get("/plantillas", {
         params: {
           searchText: searchText,
         },
@@ -56,10 +56,10 @@ const Customers = () => {
       >
         <Container maxWidth={false}>
           <Toolbar
-            title=""
-            btnText={"Generar nuevo"}
+            title="Plantillas"
+            btnText={"Nueva plantilla"}
             onClickBtn={() => router.push("/generador/create")}
-            searchText="Buscar documento"
+            searchText="Buscar plantilla"
             onSearch={onSearch}
           />
           <Box sx={{ mt: 3 }}>

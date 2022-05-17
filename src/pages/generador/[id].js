@@ -15,7 +15,7 @@ const Account = () => {
 
   useMount(async () => {
     if (query.id === "create") return;
-    const detalle = await instanciaAxios.get(`/dinamicos/${query.id}`);
+    const detalle = await instanciaAxios.get(`/plantillas/${query.id}`);
     setDetalle(detalle.data);
     setDetalleKey(uuidV4());
   });
@@ -34,7 +34,7 @@ const Account = () => {
       >
         <Container maxWidth="lg">
           <Typography sx={{ mb: 3 }} variant="h5">
-            Generador
+            Plantilla
           </Typography>
           <Grid container spacing={3}>
             <Grid item lg={12} md={12} xs={12}>
