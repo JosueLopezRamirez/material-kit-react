@@ -16,8 +16,7 @@ const Account = () => {
   useMount(async () => {
     if (query.id === "create") return;
     const detalle = await instanciaAxios.get(`/dinamicos/${query.id}`);
-    console.log(detalle.data);
-    // setDetalle(detalle.data);
+    setDetalle(detalle.data);
     setDetalleKey(uuidV4());
   });
 

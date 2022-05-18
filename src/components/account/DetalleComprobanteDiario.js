@@ -75,8 +75,10 @@ export const DetalleComprobanteDiario = (props) => {
             comprobanteItems: rowData,
           });
         }
+        if (!isEdit) {
+          router.push("/account/" + respuesta.data.id);
+        }
         toast.success(`Comprobante de diario ${isEdit ? "actualizado" : "creado"} correctamente`);
-        router.push("/account/" + respuesta.data.id);
       } catch (error) {
         console.log({ error });
         toast.error(`Error al ${isEdit ? "actualizar" : "crear"} comprobante de diario`);

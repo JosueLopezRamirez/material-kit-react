@@ -1,20 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Divider,
-  FormControlLabel,
-  Grid,
-  MenuItem,
-  Switch,
-  TextField,
-} from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import { Box, Button, Card, CardContent, Divider, Grid, MenuItem, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useMount } from "react-use";
@@ -25,11 +10,8 @@ import { makeStyles } from "@mui/styles";
 import { AgGridReact } from "ag-grid-react";
 import { AddCircleOutlined } from "@mui/icons-material";
 import { useRouter } from "next/router";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { isEmpty } from "lodash";
-import { InputOnlyLettersRenderer } from "../renderers";
 
 const useStyles = makeStyles({
   cardHeader: {
@@ -57,35 +39,11 @@ export const Detalle = (props) => {
   const { formData, isEdit } = props;
   const classes = useStyles();
   const router = useRouter();
-  const variableRef = useRef();
   const gridRef = useRef();
-  const [expanded, setExpanded] = useState(false);
   const [plantillaSeleccionada, setPlantillaSeleccionada] = useState(null);
   const [clientes, setClientes] = useState([]);
   const [plantillas, setPlantillas] = useState([]);
   const [variableRowData, setVariableRowData] = useState([]);
-
-  const variablesColDefs = useMemo(
-    () => [
-      { field: "", checkboxSelection: true, maxWidth: 35, editable: false },
-      {
-        field: "Nombre",
-        cellClass: classes.variableCell,
-        //cellRenderer: "inputOnlyLetters",
-        //editable: false,
-      },
-      { field: "Grupo" },
-      { field: "Valor" },
-      {
-        field: "Tipo",
-        cellEditor: "agSelectCellEditor",
-        cellEditorParams: {
-          values: ["Numerico", "Texto", "Lista", "Fecha"],
-        },
-      },
-    ],
-    []
-  );
 
   const formik = useFormik({
     initialValues: {
@@ -105,15 +63,16 @@ export const Detalle = (props) => {
         let respuesta = null;
         const newData = {
           ...data,
-          columnas: JSON.stringify(getVariableRowData()),
-          esPlantilla: true,
+          filas: getVariableRowData(),
         };
         if (isEdit) {
           respuesta = await instanciaAxios.patch(`/dinamicos/` + formData.id, newData);
         } else {
           respuesta = await instanciaAxios.post(`/dinamicos/`, newData);
         }
-        router.push("/documentos/" + respuesta.data.id);
+        if (!isEdit) {
+          router.push("/documentos/" + respuesta.data.id);
+        }
       } catch (error) {
         console.log({ error });
       }
@@ -168,7 +127,6 @@ export const Detalle = (props) => {
                 newExpression = newExpression + `parseFloat(data.${expression} ?? 0)`;
               }
             });
-            console.log({ newExpression });
             options = {
               valueGetter: newExpression,
               valueFormatter: (params) => parseFloat(params.value).toFixed(2),
@@ -176,8 +134,6 @@ export const Detalle = (props) => {
           } else {
             options = {
               valueSetter: numberNewValueHandler,
-              // valueGetter: (params) =>
-              //   parseFloat(params.node.data[column.Nombre]) ?? parseFloat(column.Valor),
             };
           }
         }
@@ -223,7 +179,7 @@ export const Detalle = (props) => {
 
   const getVariableRowData = () => {
     let rowData = [];
-    variableRef?.current?.api?.forEachNodeAfterFilterAndSort((node) => {
+    gridRef?.current?.api?.forEachNodeAfterFilterAndSort((node) => {
       rowData.push(node.data);
     });
     return rowData;
@@ -233,7 +189,8 @@ export const Detalle = (props) => {
     obtenerClientes();
     obtenerPlantillas();
     if (isEmpty(formData)) return;
-    const variablesRows = JSON.parse(formData.filas);
+    const variablesRows = formData.filas.map((fila) => JSON.parse(fila.valor));
+    setPlantillaSeleccionada(formData.plantilla);
     setVariableRowData(variablesRows);
   });
 

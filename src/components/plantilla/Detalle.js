@@ -103,6 +103,8 @@ export const Detalle = (props) => {
           respuesta = await instanciaAxios.patch(`/plantillas/` + formData.id, newData);
         } else {
           respuesta = await instanciaAxios.post(`/plantillas/`, newData);
+        }
+        if (!isEdit) {
           router.push("/generador/" + respuesta.data.id);
         }
       } catch (error) {
