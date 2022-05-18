@@ -1,7 +1,9 @@
 import CloseIcon from "@mui/icons-material/Close";
-import { Input, MenuItem, Switch, TextField } from "@mui/material";
+import { MenuItem, Switch, TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const useStyles = makeStyles({
   remove: {
@@ -68,8 +70,6 @@ export const SelectRenderer = forwardRef((props, ref) => {
   });
 
   const onChange = (event) => {
-    console.log("value", event.target.value);
-    console.log(props);
     props.setValue(event.target.value);
     setValue(event.target.value);
   };
@@ -119,6 +119,62 @@ export const InputOnlyLettersRenderer = forwardRef((props, ref) => {
       ref={ref}
       value={value}
       onChange={onChange}
+    />
+  );
+});
+
+export const InputOnlyNumbersRenderer = forwardRef((props, ref) => {
+  const [value, setValue] = useState(props.value);
+  const inputRef = useRef();
+
+  useImperativeHandle(ref, () => {
+    return {
+      getValue() {
+        return value;
+      },
+    };
+  });
+
+  const onChange = (e) => {
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === "" || re.test(e.target.value)) {
+      setValue(e.target.value);
+      props.setValue(e.target.value);
+    }
+  };
+
+  const onKeyDown = (e) => {
+    if (e.keyCode === 13) {
+      inputRef.current.blur();
+    }
+  };
+
+  return <input ref={inputRef} value={value} onChange={onChange} onKeyDown={onKeyDown} />;
+});
+
+export const DatePickerRenderer = forwardRef((props, ref) => {
+  const [value, setValue] = useState(new Date(props.value));
+
+  useImperativeHandle(ref, () => {
+    return {
+      getValue() {
+        return value;
+      },
+    };
+  });
+
+  const onChange = (date) => {
+    props.setValue(date);
+    setValue(date);
+  };
+
+  return (
+    <DatePicker
+      portalId="root"
+      selected={value}
+      onChange={onChange}
+      dateFormat="dd/MM/yyyy"
+      popperClassName="ag-custom-component-popup"
     />
   );
 });

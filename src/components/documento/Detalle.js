@@ -11,7 +11,9 @@ import { AgGridReact } from "ag-grid-react";
 import { AddCircleOutlined } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { toast } from "react-toastify";
 import { isEmpty } from "lodash";
+import { DatePickerRenderer, InputOnlyNumbersRenderer } from "../renderers";
 
 const useStyles = makeStyles({
   cardHeader: {
@@ -42,6 +44,7 @@ export const Detalle = (props) => {
   const gridRef = useRef();
   const [plantillaSeleccionada, setPlantillaSeleccionada] = useState(null);
   const [clientes, setClientes] = useState([]);
+  const [columnDefs, setColumnDefs] = useState([]);
   const [plantillas, setPlantillas] = useState([]);
   const [variableRowData, setVariableRowData] = useState([]);
 
@@ -70,11 +73,13 @@ export const Detalle = (props) => {
         } else {
           respuesta = await instanciaAxios.post(`/dinamicos/`, newData);
         }
+        toast.success(`Documento ${isEdit ? "actualizado" : "creado"} correctamente`);
         if (!isEdit) {
           router.push("/documentos/" + respuesta.data.id);
         }
       } catch (error) {
         console.log({ error });
+        toast.error(`Error al ${isEdit ? "actualizar" : "crear"} documento`);
       }
     },
   });
@@ -84,14 +89,6 @@ export const Detalle = (props) => {
     const columns = JSON.parse(plantillaSeleccionada.columnas);
     createColumnDefs(columns);
   }, [plantillaSeleccionada]);
-
-  const numberNewValueHandler = (params) => {
-    var valueAsNumber = parseFloat(params.newValue);
-    var field = params.colDef.field;
-    var data = params.data;
-    data[field] = valueAsNumber;
-    return true;
-  };
 
   const createColumnDefs = (columns = []) => {
     let colDefs = [];
@@ -116,6 +113,10 @@ export const Detalle = (props) => {
         }
       }
       if (column.Tipo === "Numerico") {
+        options = {
+          cellRenderer: "inputOnlyNumbersRenderer",
+          editable: false,
+        };
         if (column.Valor) {
           if (isNaN(column.Valor)) {
             const expresiones = column.Valor.split(" ");
@@ -130,21 +131,17 @@ export const Detalle = (props) => {
             options = {
               valueGetter: newExpression,
               valueFormatter: (params) => parseFloat(params.value).toFixed(2),
-            };
-          } else {
-            options = {
-              valueSetter: numberNewValueHandler,
+              cellRenderer: "inputOnlyNumbersRenderer",
+              editable: false,
             };
           }
         }
       }
       if (column.Tipo === "Fecha") {
-        if (column.Valor) {
-          options = {
-            valueGetter: (params) =>
-              params.node.data[column.Nombre] ?? format(new Date(column.Valor), "dd-MM-yyyy"),
-          };
-        }
+        options = {
+          cellRenderer: "datePickerRenderer",
+          editable: false,
+        };
       }
       const index = colDefs.findIndex((col) => col.headerName === column.Grupo);
       if (index === -1) {
@@ -171,10 +168,8 @@ export const Detalle = (props) => {
         };
       }
     });
-    gridRef.current.api.setColumnDefs([
-      { field: "", checkboxSelection: true, width: 35, maxWidth: 35 },
-      ...colDefs,
-    ]);
+    console.log({ colDefs });
+    setColumnDefs([{ field: "", checkboxSelection: true, width: 35, maxWidth: 35 }, ...colDefs]);
   };
 
   const getVariableRowData = () => {
@@ -189,7 +184,9 @@ export const Detalle = (props) => {
     obtenerClientes();
     obtenerPlantillas();
     if (isEmpty(formData)) return;
-    const variablesRows = formData.filas.map((fila) => JSON.parse(fila.valor));
+    const variablesRows = formData.filas
+      .map((fila) => ({ id: fila.id, ...JSON.parse(fila.valor) }))
+      .map((item) => ({ ...item, isNewRow: false }));
     setPlantillaSeleccionada(formData.plantilla);
     setVariableRowData(variablesRows);
   });
@@ -342,11 +339,16 @@ export const Detalle = (props) => {
                 <AgGridReact
                   ref={gridRef}
                   rowData={variableRowData}
+                  columnDefs={columnDefs}
                   rowHeight={30}
                   headerHeight={30}
                   defaultColDef={{
                     editable: true,
                     flex: 1,
+                  }}
+                  components={{
+                    datePickerRenderer: DatePickerRenderer,
+                    inputOnlyNumbersRenderer: InputOnlyNumbersRenderer,
                   }}
                 />
               </div>
