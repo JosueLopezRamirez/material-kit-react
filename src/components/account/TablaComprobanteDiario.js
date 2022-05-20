@@ -1,5 +1,6 @@
 import { useState } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
+import { AiFillFilePdf } from "react-icons/ai";
 import PropTypes from "prop-types";
 import { format } from "date-fns";
 import {
@@ -23,9 +24,11 @@ import instanciaAxios from "src/utils/instancia-axios";
 import { toast } from "react-toastify";
 import { FeatureFlag } from "../FeatureFlag";
 import { COMPORBANTE_DIARIO, permiso } from "src/utils/Constants";
+import { ViewPdfModal } from "../modals/ViewPdfModal";
 
 export const TablaComprobanteDiario = ({ data, refetch, editar, ...rest }) => {
   const [limit, setLimit] = useState(25);
+  const [viewPdf, setViewPdf] = useState(null);
   const router = useRouter();
   const [page, setPage] = useState(0);
 
@@ -74,6 +77,11 @@ export const TablaComprobanteDiario = ({ data, refetch, editar, ...rest }) => {
                         </IconButton>
                       </Tooltip>
                     </FeatureFlag>
+                    <Tooltip title="Ver Pdf">
+                      <IconButton onClick={() => setViewPdf(item.id)}>
+                        <AiFillFilePdf color="red" />
+                      </IconButton>
+                    </Tooltip>
                     <FeatureFlag pagina={COMPORBANTE_DIARIO} permiso={permiso.ELIMINACION}>
                       <Tooltip title="Dar de baja">
                         <IconButton onClick={() => borrar(item.id)}>
@@ -97,6 +105,9 @@ export const TablaComprobanteDiario = ({ data, refetch, editar, ...rest }) => {
         rowsPerPage={limit}
         rowsPerPageOptions={[5, 10, 25]}
       />
+      {viewPdf && (
+        <ViewPdfModal variant="comprobante" id={viewPdf} onClose={() => setViewPdf(null)} />
+      )}
     </Card>
   );
 };
