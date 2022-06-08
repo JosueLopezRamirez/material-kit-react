@@ -59,9 +59,9 @@ export const DetalleFactura = (props) => {
 
   const formik = useFormik({
     initialValues: {
-      empresaId: formData.estatico.documento.empresaId,
-      nombre: formData.nombre,
-      fecha: formData.fecha,
+      empresaId: formData?.estatico?.documento?.empresaId,
+      nombre: formData?.nombre,
+      fecha: formData?.fecha,
     },
     validationSchema: Yup.object({
       nombre: Yup.string().max(255).required("Nombre es requerido"),
@@ -186,7 +186,6 @@ export const DetalleFactura = (props) => {
                   onBlur={formik.handleBlur}
                   margin="dense"
                   variant="standard"
-                  disabled={isEdit}
                 >
                   {clientes.map((option) => (
                     <MenuItem value={option.id}>{option.nombre}</MenuItem>

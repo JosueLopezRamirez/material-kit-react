@@ -1,7 +1,7 @@
 import CloseIcon from "@mui/icons-material/Close";
 import { MenuItem, Switch, TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -153,7 +153,12 @@ export const InputOnlyNumbersRenderer = forwardRef((props, ref) => {
 });
 
 export const DatePickerRenderer = forwardRef((props, ref) => {
-  const [value, setValue] = useState(new Date(props.value));
+  const [value, setValue] = useState(new Date());
+
+  useEffect(() => {
+    if (!props.value) return;
+    setValue(new Date(props.value));
+  }, [props.value]);
 
   useImperativeHandle(ref, () => {
     return {

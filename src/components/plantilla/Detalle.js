@@ -73,7 +73,7 @@ export const Detalle = (props) => {
         //editable: false,
       },
       { field: "Grupo" },
-      { field: "Valor" },
+      // { field: "Valor" },
       {
         field: "Tipo",
         cellEditor: "agSelectCellEditor",

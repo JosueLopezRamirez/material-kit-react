@@ -105,8 +105,8 @@ export const DetalleComprobanteDiario = (props) => {
     () => [
       { field: "numeroCuenta" },
       { field: "descripcion" },
-      { field: "parcial" },
-      { field: "debito" },
+      { field: "parcial", valueFormatter: (params) => "$" + params.value },
+      { field: "debito", valueFormatter: (params) => "$" + params.value },
       {
         field: "haber",
         valueGetter: (params) => {
@@ -114,6 +114,7 @@ export const DetalleComprobanteDiario = (props) => {
           const val = parseFloat(data.parcial ?? 0) - parseFloat(data.debito ?? 0);
           return isNaN(val) ? 0 : val.toFixed(2);
         },
+        valueFormatter: (params) => "$" + params.value,
       },
     ],
     []
@@ -143,7 +144,6 @@ export const DetalleComprobanteDiario = (props) => {
                   onBlur={formik.handleBlur}
                   margin="dense"
                   variant="standard"
-                  disabled={isEdit}
                 >
                   {clientes.map((option) => (
                     <MenuItem value={option.id}>{option.nombre}</MenuItem>
