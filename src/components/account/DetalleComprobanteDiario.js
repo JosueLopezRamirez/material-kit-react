@@ -65,15 +65,33 @@ export const DetalleComprobanteDiario = (props) => {
         let respuesta = null;
         const rowData = getRowData();
         if (isEdit) {
-          respuesta = await instanciaAxios.patch(`/comprobante-diario/` + formData.id, {
-            comprobante: data,
-            comprobanteItems: rowData,
-          });
+          respuesta = await instanciaAxios.patch(
+            `/comprobante-diario/` + formData.id,
+            {
+              comprobante: data,
+              comprobanteItems: rowData,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                authorization: localStorage.getItem("token"),
+              },
+            }
+          );
         } else {
-          respuesta = await instanciaAxios.post(`/comprobante-diario/`, {
-            comprobante: data,
-            comprobanteItems: rowData,
-          });
+          respuesta = await instanciaAxios.post(
+            `/comprobante-diario/`,
+            {
+              comprobante: data,
+              comprobanteItems: rowData,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                authorization: localStorage.getItem("token"),
+              },
+            }
+          );
         }
         if (!isEdit) {
           router.push("/account/" + respuesta.data.id);

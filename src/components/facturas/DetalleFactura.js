@@ -73,15 +73,33 @@ export const DetalleFactura = (props) => {
         let respuesta = null;
         const rowData = getRowData();
         if (isEdit) {
-          respuesta = await instanciaAxios.patch(`/facturas/` + formData.id, {
-            factura: data,
-            facturaItems: rowData,
-          });
+          respuesta = await instanciaAxios.patch(
+            `/facturas/` + formData.id,
+            {
+              factura: data,
+              facturaItems: rowData,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                authorization: localStorage.getItem("token"),
+              },
+            }
+          );
         } else {
-          respuesta = await instanciaAxios.post(`/facturas/`, {
-            factura: data,
-            facturaItems: rowData,
-          });
+          respuesta = await instanciaAxios.post(
+            `/facturas/`,
+            {
+              factura: data,
+              facturaItems: rowData,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                authorization: localStorage.getItem("token"),
+              },
+            }
+          );
         }
         if (!isEdit) {
           router.push("/facturas/" + respuesta.data.id);
